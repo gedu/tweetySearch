@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Tweety search</string>
+    <string name="search_query_hint_msg">Words to search</string>
+    <string name="search_by_location_desc">Search by location</string>
+    <string name="search_by_recent_desc">Search by recent</string>
+    <string name="search_by_popular_desc">Search by populars</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="recently_searched_title_txt">Recently searched</string>
 </resources>
