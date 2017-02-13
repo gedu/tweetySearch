@@ -22,22 +22,27 @@ import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
  * Created by edu on 2/13/17.
  */
 
-public class TweeterSearchManager {
+public class TwitterSearchManager {
 
-    private static final String TWEETER_BASE_URL = "https://api.twitter.com/1.1/search/tweets.json?";
-    private static TweeterSearchManager mInstance;
+    private static final String TWITTER_BASE_URL = "https://api.twitter.com/1.1/search/tweets.json?";
+    private static final String TWITTER_OAUTH_URL = "https://api.twitter.com/oauth2/token";
 
-    public static TweeterSearchManager getInstance(){
-        if(mInstance == null) mInstance = new TweeterSearchManager();
+    private static TwitterSearchManager mInstance;
+    public static TwitterSearchManager getInstance(){
+        if(mInstance == null) mInstance = new TwitterSearchManager();
         return mInstance;
     }
 
-    private TweeterSearchManager(){}
+    private TwitterSearchManager(){}
 
     private boolean mFirstSearch = false;
 
+    public void authenticate(){
+        new AuthenticationHttpClient().authenticate(TWITTER_OAUTH_URL);
+    }
+
     public void search(UrlParameter urlParameter){
 
-        new SearchTweetsHttpClient().getTweets(TWEETER_BASE_URL + urlParameter.getParameters());
+        new SearchTweetsHttpClient().getTweets(TWITTER_BASE_URL + urlParameter.getParameters());
     }
 }

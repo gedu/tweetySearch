@@ -20,7 +20,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.gemapps.tweetysearch.R;
-import com.gemapps.tweetysearch.networking.TweeterSearchManager;
+import com.gemapps.tweetysearch.networking.TwitterSearchManager;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 
 public class MainSearchActivity extends AppCompatActivity
@@ -50,6 +50,6 @@ public class MainSearchActivity extends AppCompatActivity
 
     @Override
     public void onSearch(UrlParameter urlParameter) {
-        TweeterSearchManager.getInstance().search(urlParameter);
+        TwitterSearchManager.getInstance().search(urlParameter);
     }
 }

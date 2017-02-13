@@ -21,8 +21,10 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
@@ -34,7 +36,7 @@ import java.io.IOException;
  */
 public class BaseHttpClient {
 
-    static final String BASE_TWEETER_URL = "https://api.twitter.com/1.1/search/tweets.json?";
+
     private static final String TAG = "BaseHttpClient";
     public interface HttpClientListener {
         void onSuccess(String response);
@@ -44,12 +46,26 @@ public class BaseHttpClient {
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private HttpClientListener mListener;
 
-    protected void doGet(String url, HttpClientListener listener){
+    void doPost(String url, Headers headers, RequestBody body, HttpClientListener listener){
+
+        mListener = listener;
+        final Request request = new Request.Builder()
+                .headers(headers)
+                .url(url)
+                .post(body)
+                .build();
+        makeNew(request);
+    }
+
+    void doGet(String url, HttpClientListener listener){
         mListener = listener;
 
-        final OkHttpClient httpClient = BaseOkhttp.CLIENT;
         final Request request = new Request.Builder().url(url).build();
+        makeNew(request);
+    }
 
+    private void makeNew(final Request request){
+        final OkHttpClient httpClient = BaseOkhttp.CLIENT;
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
@@ -60,6 +76,8 @@ public class BaseHttpClient {
             public void onResponse(Response response) throws IOException {
 
                 final String body = response.body().string();
+                Log.d(TAG, "RESPONSE: "+response);
+                Log.d(TAG, "CODE: "+response.code());
                 response.body().close();
                 mHandler.post(new Runnable() {
                     @Override

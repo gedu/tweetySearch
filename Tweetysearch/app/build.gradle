@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 25
@@ -8,6 +9,7 @@ android {
         applicationId "com.gemapps.tweetysearch"
         minSdkVersion 10
         targetSdkVersion 25
+        buildConfigField "String", 'TWITTER_APP_KEY', TWITTER_APP_KEY
         vectorDrawables.useSupportLibrary = true
         versionCode 1
         versionName "1.1.0"
@@ -45,5 +47,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.android.support:support-v4:25.1.0'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
+    compile 'io.realm:android-adapters:1.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
 }
