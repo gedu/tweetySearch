@@ -14,25 +14,41 @@
  *    limitations under the License.
  */
 
-package com.gemapps.tweetysearch;
+package com.gemapps.tweetysearch.networking.model;
 
-import android.app.Application;
+import com.google.gson.annotations.SerializedName;
 
-import com.gemapps.tweetysearch.networking.TwitterSearchManager;
-
-import io.realm.Realm;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by edu on 2/13/17.
+ * Basic POJO for Twitter token
  */
+public class Bearer extends RealmObject {
 
-public class TweetyApplication extends Application {
+    @PrimaryKey
+    private long mId;
+    @SerializedName("access_token")
+    private String mToken;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    public Bearer() {
+        mId = System.currentTimeMillis();
+    }
 
-        Realm.init(this);
-        TwitterSearchManager.getInstance().authenticate();
+    public String getToken() {
+        return mToken;
+    }
+
+    public void setToken(String token) {
+        mToken = token;
+    }
+
+    public long getId() {
+        return mId;
+    }
+
+    public void setId(long id) {
+        this.mId = id;
     }
 }

@@ -18,7 +18,6 @@ package com.gemapps.tweetysearch.networking;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Headers;
@@ -36,12 +35,12 @@ import java.io.IOException;
  */
 public class BaseHttpClient {
 
-
     private static final String TAG = "BaseHttpClient";
     public interface HttpClientListener {
         void onSuccess(String response);
         void onFailure();
     }
+    private static final int OK = 200;
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private HttpClientListener mListener;
@@ -74,17 +73,18 @@ public class BaseHttpClient {
 
             @Override
             public void onResponse(Response response) throws IOException {
-
                 final String body = response.body().string();
-                Log.d(TAG, "RESPONSE: "+response);
-                Log.d(TAG, "CODE: "+response.code());
                 response.body().close();
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mListener.onSuccess(body);
-                    }
-                });
+                if(response.code() == OK) {
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mListener.onSuccess(body);
+                        }
+                    });
+                }else{
+                    mListener.onFailure();
+                }
             }
         });
     }

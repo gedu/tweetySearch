@@ -14,25 +14,18 @@
  *    limitations under the License.
  */
 
-package com.gemapps.tweetysearch;
+package com.gemapps.tweetysearch.util;
 
-import android.app.Application;
-
-import com.gemapps.tweetysearch.networking.TwitterSearchManager;
-
-import io.realm.Realm;
+import com.gemapps.tweetysearch.networking.model.Bearer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * Created by edu on 2/13/17.
  */
 
-public class TweetyApplication extends Application {
+public class GsonUtil {
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        Realm.init(this);
-        TwitterSearchManager.getInstance().authenticate();
-    }
+    public static final Gson BEARER_GSON = new GsonBuilder().registerTypeAdapter(Bearer.class,
+            new TwitterDeserializer<Bearer>(null)).create();
 }

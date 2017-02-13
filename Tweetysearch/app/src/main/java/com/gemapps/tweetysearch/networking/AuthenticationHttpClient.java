@@ -19,9 +19,13 @@ package com.gemapps.tweetysearch.networking;
 import android.util.Log;
 
 import com.gemapps.tweetysearch.BuildConfig;
+import com.gemapps.tweetysearch.networking.model.Bearer;
+import com.gemapps.tweetysearch.util.GsonUtil;
 import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
+
+import io.realm.Realm;
 
 /**
  * Created by edu on 2/13/17.
@@ -39,14 +43,20 @@ public class AuthenticationHttpClient extends BaseHttpClient {
     public void authenticate(String url){
         doPost(url, buildHeader(), buildRequestBody(), new HttpClientListener() {
             @Override
-            public void onSuccess(String response) {
-                Log.d(TAG, "onSuccess() called with: response = <" + response + ">");
+            public void onSuccess(final String response) {
+                TwitterSearchManager.getInstance()
+                        .getRealm().executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        Bearer bearer = GsonUtil.BEARER_GSON.fromJson(response, Bearer.class);
+                        realm.insertOrUpdate(bearer);
+                    }
+                });
             }
 
             @Override
             public void onFailure() {
                 Log.d(TAG, "onFailure() called");
-
             }
         });
     }

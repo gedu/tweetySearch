@@ -16,13 +16,17 @@
 
 package com.gemapps.tweetysearch.networking;
 
+import com.gemapps.tweetysearch.networking.model.Bearer;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
+
+import io.realm.Realm;
 
 /**
  * Created by edu on 2/13/17.
  */
 
 public class TwitterSearchManager {
+    private static final String TAG = "TwitterSearchManager";
 
     private static final String TWITTER_BASE_URL = "https://api.twitter.com/1.1/search/tweets.json?";
     private static final String TWITTER_OAUTH_URL = "https://api.twitter.com/oauth2/token";
@@ -33,16 +37,27 @@ public class TwitterSearchManager {
         return mInstance;
     }
 
-    private TwitterSearchManager(){}
-
     private boolean mFirstSearch = false;
+    private Realm mRealm;
+    private Bearer mBearer;
+
+    private TwitterSearchManager(){
+        mRealm = Realm.getDefaultInstance();
+    }
 
     public void authenticate(){
-        new AuthenticationHttpClient().authenticate(TWITTER_OAUTH_URL);
+        mBearer = mRealm.where(Bearer.class).findFirstAsync();
+        if(!mBearer.isValid()) {
+            new AuthenticationHttpClient().authenticate(TWITTER_OAUTH_URL);
+        }
     }
 
     public void search(UrlParameter urlParameter){
 
         new SearchTweetsHttpClient().getTweets(TWITTER_BASE_URL + urlParameter.getParameters());
+    }
+
+    public Realm getRealm(){
+        return mRealm;
     }
 }
