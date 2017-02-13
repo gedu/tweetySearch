@@ -1,5 +1,5 @@
 /*
- *    Copyright {yyyy} {name of copyright owner}
+ *    Copyright 2017 Edu Graciano
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,13 +16,17 @@
 
 package com.gemapps.tweetysearch.ui.mainsearch;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.gemapps.tweetysearch.R;
+import com.gemapps.tweetysearch.networking.TweeterSearchManager;
+import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 
-public class MainSearchActivity extends AppCompatActivity {
+public class MainSearchActivity extends AppCompatActivity
+        implements MainSearchFragment.OnSearchListener {
 
+    private static final String TAG = "MainSearchActivity";
     private static final String SEARCH_FRAGMENT_TAG = "tweety.SEARCH_FRAGMENT_TAG";
 
     @Override
@@ -42,5 +46,10 @@ public class MainSearchActivity extends AppCompatActivity {
                             SEARCH_FRAGMENT_TAG)
                     .commit();
         }
+    }
+
+    @Override
+    public void onSearch(UrlParameter urlParameter) {
+        TweeterSearchManager.getInstance().search(urlParameter);
     }
 }

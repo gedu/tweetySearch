@@ -1,5 +1,5 @@
 /*
- *    Copyright {yyyy} {name of copyright owner}
+ *    Copyright 2017 Edu Graciano
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,74 +16,98 @@
 
 package com.gemapps.tweetysearch.ui.mainsearch;
 
-import android.net.Uri;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.gemapps.tweetysearch.R;
+import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
+import com.gemapps.tweetysearch.networking.searchquery.paramquery.Query;
+
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MainSearchFragment.OnFragmentInteractionListener} interface
+ * {@link MainSearchFragment.OnSearchListener} interface
  * to handle interaction events.
  * Use the {@link MainSearchFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class MainSearchFragment extends Fragment {
 
-    private OnFragmentInteractionListener mListener;
+    private static final String TAG = "MainSearchFragment";
+    public interface OnSearchListener {
+
+        void onSearch(UrlParameter urlParameter);
+    }
+
+    private OnSearchListener mListener;
+    private MainSearchViewHelper mViewHelper;
+    private UrlParameter.Builder mParameterBuilder;
 
     public MainSearchFragment() {
         // Required empty public constructor
     }
 
     public static MainSearchFragment newInstance() {
-        MainSearchFragment fragment = new MainSearchFragment();
-        return fragment;
+        return new MainSearchFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mParameterBuilder = new UrlParameter.Builder();
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnSearchListener) {
+            mListener = (OnSearchListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main_search, container, false);
+        View root = inflater.inflate(R.layout.fragment_main_search, container, false);
+        ButterKnife.bind(this, root);
+        mViewHelper = new MainSearchViewHelper(root);
+        mViewHelper.addSearchClickListener(new MainSearchViewHelper.SearchClickListener() {
+            @Override
+            public void onSearchClicked() {
+                onSearchPressed();
+            }
+        });
+        return root;
     }
 
+    @OnClick(R.id.query_search_button)
+    public void onSearchClicked(){
+        onSearchPressed();
+    }
 
-    public void onButtonPressed(Uri uri) {
+    public void onSearchPressed() {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mParameterBuilder.addParameter(new Query(mViewHelper.getTextToSearch()));
+            mListener.onSearch(mParameterBuilder.build());
         }
     }
-//
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
 
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
 
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 }

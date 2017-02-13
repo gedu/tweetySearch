@@ -17,44 +17,61 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.v7.widget.SearchView
-                android:id="@+id/word_search_view"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:iconifiedByDefault="false"
-                app:queryHint="@string/search_query_hint_msg"/>
+                android:orientation="horizontal">
+
+                <android.support.v7.widget.SearchView
+                    android:id="@+id/word_search_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:iconifiedByDefault="false"
+                    app:queryHint="@string/search_query_hint_msg"/>
+
+                <Button
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:id="@+id/query_search_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/search_text"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <ImageButton
-                    android:id="@+id/location_search_button"
-                    style="@style/BorderlessButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/search_by_location_desc"
-                    app:srcCompat="@drawable/ic_location_on_black_24px"/>
-
-                <ImageButton
+                <Button
                     android:id="@+id/recent_search_button"
                     style="@style/BorderlessButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:contentDescription="@string/search_by_recent_desc"
-                    app:srcCompat="@drawable/ic_fiber_new_black_24px"/>
+                    android:text="recents"
+                    android:drawableTop="@drawable/ic_fiber_new_black_24px"/>
 
-                <ImageButton
+                <Button
                     android:id="@+id/popular_search_button"
                     style="@style/BorderlessButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:contentDescription="@string/search_by_popular_desc"
-                    app:srcCompat="@drawable/ic_loyalty_black_24px"/>
+                    android:text="populars"
+                    android:drawableTop="@drawable/ic_loyalty_black_24px"/>
+
+                <Button
+                    android:id="@+id/location_search_button"
+                    style="@style/BorderlessButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/search_by_location_desc"
+                    android:text="location"
+                    android:drawableTop="@drawable/ic_location_on_black_24px"/>
 
             </LinearLayout>
 
