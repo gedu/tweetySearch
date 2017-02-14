@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.gemapps.tweetysearch.ui;
+package com.gemapps.tweetysearch.ui.butter;
 
 import android.support.annotation.LayoutRes;
 import android.support.v4.app.Fragment;

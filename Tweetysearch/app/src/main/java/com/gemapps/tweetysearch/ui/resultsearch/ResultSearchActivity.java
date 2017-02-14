@@ -23,6 +23,7 @@ import com.gemapps.tweetysearch.R;
 
 public class ResultSearchActivity extends AppCompatActivity {
 
+    private static final String TAG = "ResultSearchActivity";
     private static final String RESULT_FRAGMENT_TAG = "tweety.RESULT_FRAGMENT_TAG";
 
     @Override
@@ -42,4 +43,5 @@ public class ResultSearchActivity extends AppCompatActivity {
                     .commit();
         }
     }
+
 }

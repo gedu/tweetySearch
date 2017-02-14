@@ -18,18 +18,18 @@ package com.gemapps.tweetysearch.ui.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-
+import io.realm.RealmList;
+import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by edu on 2/13/17.
  */
 
-public class TweetCollection {
+public class TweetCollection extends RealmObject {
 
     @SerializedName("statuses")
-    private ArrayList<TweetItem> mTweetItems = new ArrayList<>();
+    private RealmList<TweetItem> mTweetItems = new RealmList<>();
     @PrimaryKey
     private String mId;
 
@@ -39,11 +39,11 @@ public class TweetCollection {
         mTweetItems.add(tweetItem);
     }
 
-    public ArrayList<TweetItem> getTweetItems() {
+    public RealmList<TweetItem> getTweetItems() {
         return mTweetItems;
     }
 
-    public void setTweetItems(ArrayList<TweetItem> tweetItems) {
+    public void setTweetItems(RealmList<TweetItem> tweetItems) {
         mTweetItems = tweetItems;
     }
 

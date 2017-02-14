@@ -26,7 +26,7 @@ import android.view.ViewGroup;
 import com.gemapps.tweetysearch.R;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 import com.gemapps.tweetysearch.networking.searchquery.paramquery.Query;
-import com.gemapps.tweetysearch.ui.ButterFragment;
+import com.gemapps.tweetysearch.ui.butter.ButterFragment;
 
 import butterknife.OnClick;
 

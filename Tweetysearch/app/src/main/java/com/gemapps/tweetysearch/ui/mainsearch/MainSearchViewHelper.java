@@ -57,6 +57,8 @@ public class MainSearchViewHelper {
     }
 
     public String getTextToSearch(){
-        return mSearchView.getQuery().toString();
+        String text = mSearchView.getQuery().toString();
+        mSearchView.setQuery("", false);
+        return text;
     }
 }

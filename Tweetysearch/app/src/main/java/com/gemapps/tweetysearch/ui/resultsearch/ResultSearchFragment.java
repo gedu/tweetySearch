@@ -17,18 +17,39 @@
 package com.gemapps.tweetysearch.ui.resultsearch;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.gemapps.tweetysearch.R;
-import com.gemapps.tweetysearch.ui.ButterFragment;
+import com.gemapps.tweetysearch.networking.model.NetworkResponseBridge;
+import com.gemapps.tweetysearch.ui.butter.ButterFragment;
+import com.gemapps.tweetysearch.ui.model.TweetCollection;
+import com.gemapps.tweetysearch.ui.model.TweetItem;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import butterknife.BindView;
+import io.realm.RealmList;
 
 /**
  * Use the {@link ResultSearchFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class ResultSearchFragment extends ButterFragment {
+
+    private static final String TAG = "ResultSearchFragment";
+
+    @BindView(R.id.result_recycler_view)
+    RecyclerView mResultView;
+
+    private ResultRecyclerAdapter mAdapter;
 
     public ResultSearchFragment() {
         // Required empty public constructor
@@ -46,7 +67,7 @@ public class ResultSearchFragment extends ButterFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mAdapter = new ResultRecyclerAdapter(new RealmList<TweetItem>());
     }
 
     @Override
@@ -54,4 +75,38 @@ public class ResultSearchFragment extends ButterFragment {
                              Bundle savedInstanceState) {
         return createView(inflater, container, R.layout.fragment_result_search);
     }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mResultView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mResultView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart");
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        Log.d(TAG, "onStop");
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNetworkResponseEvent(NetworkResponseBridge response){
+
+        if(response.getType() == NetworkResponseBridge.TWEETS_SEARCH){
+            TweetCollection tweetCollection = (TweetCollection) response.getContent();
+            RealmList<TweetItem> realmList = tweetCollection.getTweetItems();
+            Log.d(TAG, "onNetworkResponseEvent: UPDATE");
+            mAdapter.addItems(realmList);
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
 }
