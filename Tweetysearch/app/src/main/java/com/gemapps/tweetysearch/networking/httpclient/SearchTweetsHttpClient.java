@@ -40,7 +40,6 @@ public class SearchTweetsHttpClient extends BaseHttpClient {
     @Override
     protected void onSuccess(String body) {
         TweetCollection collection = GsonUtil.TWEETS_GSON.fromJson(body, TweetCollection.class);
-        Log.d(TAG, "onSuccess: "+collection.getTweetItems().size());
         NetworkResponseBridge response = new NetworkResponseBridge<>(NetworkResponseBridge.TWEETS_SEARCH, collection);
         EventBus.getDefault().post(response);
     }

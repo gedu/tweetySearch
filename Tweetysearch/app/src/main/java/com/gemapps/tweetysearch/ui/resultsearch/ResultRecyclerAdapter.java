@@ -16,15 +16,18 @@
 
 package com.gemapps.tweetysearch.ui.resultsearch;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gemapps.tweetysearch.R;
 import com.gemapps.tweetysearch.ui.butter.ButterViewHolder;
 import com.gemapps.tweetysearch.ui.model.TweetItem;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import io.realm.RealmList;
@@ -33,9 +36,12 @@ import io.realm.RealmList;
  * Created by edu on 2/14/17.
  */
 public class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.TweetViewHolder> {
+
+    private Context mContext;
     private RealmList<TweetItem> mTweetItems;
 
-    public ResultRecyclerAdapter(RealmList<TweetItem> items) {
+    public ResultRecyclerAdapter(Context context, RealmList<TweetItem> items) {
+        mContext = context;
         this.mTweetItems = items;
     }
 
@@ -51,7 +57,14 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAd
     public void onBindViewHolder(TweetViewHolder holder, int position) {
         TweetItem item = mTweetItems.get(position);
 
-        holder.mTitleView.setText(item.getText());
+        holder.mUserNameText.setText(item.getUser().getName());
+        holder.mTweetCreatedDateText.setText(item.getCreatedAt());
+        holder.mTweetDescriptionText.setText(item.getText());
+        holder.mUserFavouriteCountText.setText(item.getUser().getFollowersCount());
+        Picasso.with(mContext)
+                .load(item.getUser().getProfileImageUrl())
+                .placeholder(R.color.colorAccent)
+                .into(holder.mUserAvatarImage);
     }
 
     @Override
@@ -59,18 +72,25 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAd
         return (mTweetItems == null) ? 0 : mTweetItems.size();
     }
 
-    public void addItems(RealmList<TweetItem> newItems){
+    public void addItems(RealmList<TweetItem> newItems) {
         mTweetItems.addAll(newItems);
     }
 
     class TweetViewHolder extends ButterViewHolder {
 
-        @BindView(R.id.result_title_text_view)
-        TextView mTitleView;
+        @BindView(R.id.user_avatar_image)
+        ImageView mUserAvatarImage;
+        @BindView(R.id.user_name_text)
+        TextView mUserNameText;
+        @BindView(R.id.tweet_description_text)
+        TextView mTweetDescriptionText;
+        @BindView(R.id.tweet_created_date_text)
+        TextView mTweetCreatedDateText;
+        @BindView(R.id.user_favourite_count_text)
+        TextView mUserFavouriteCountText;
 
         public TweetViewHolder(View view) {
             super(view);
-
         }
     }
 }

@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +66,7 @@ public class ResultSearchFragment extends ButterFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAdapter = new ResultRecyclerAdapter(new RealmList<TweetItem>());
+        mAdapter = new ResultRecyclerAdapter(getActivity(), new RealmList<TweetItem>());
     }
 
     @Override
@@ -86,13 +85,11 @@ public class ResultSearchFragment extends ButterFragment {
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart");
         EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
-        Log.d(TAG, "onStop");
         EventBus.getDefault().unregister(this);
         super.onStop();
     }
@@ -103,7 +100,6 @@ public class ResultSearchFragment extends ButterFragment {
         if(response.getType() == NetworkResponseBridge.TWEETS_SEARCH){
             TweetCollection tweetCollection = (TweetCollection) response.getContent();
             RealmList<TweetItem> realmList = tweetCollection.getTweetItems();
-            Log.d(TAG, "onNetworkResponseEvent: UPDATE");
             mAdapter.addItems(realmList);
             mAdapter.notifyDataSetChanged();
         }
