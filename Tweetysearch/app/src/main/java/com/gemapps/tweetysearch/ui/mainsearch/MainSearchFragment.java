@@ -19,7 +19,6 @@ package com.gemapps.tweetysearch.ui.mainsearch;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +49,7 @@ public class MainSearchFragment extends Fragment {
     private OnSearchListener mListener;
     private MainSearchViewHelper mViewHelper;
     private UrlParameter.Builder mParameterBuilder;
+    private Query mQuery;
 
     public MainSearchFragment() {
         // Required empty public constructor
@@ -63,6 +63,7 @@ public class MainSearchFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mParameterBuilder = new UrlParameter.Builder();
+        mQuery = new Query("");
     }
 
 
@@ -99,7 +100,8 @@ public class MainSearchFragment extends Fragment {
 
     public void onSearchPressed() {
         if (mListener != null) {
-            mParameterBuilder.addParameter(new Query(mViewHelper.getTextToSearch()));
+            mQuery.setParameter(mViewHelper.getTextToSearch());
+            mParameterBuilder.addParameter(mQuery);
             mListener.onSearch(mParameterBuilder.build());
         }
     }

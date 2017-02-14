@@ -14,11 +14,12 @@
  *    limitations under the License.
  */
 
-package com.gemapps.tweetysearch.networking;
+package com.gemapps.tweetysearch.networking.httpclient;
 
 import android.os.Handler;
 import android.os.Looper;
 
+import com.gemapps.tweetysearch.networking.TwitterSearchManager;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.OkHttpClient;
@@ -40,6 +41,8 @@ public class BaseHttpClient {
         void onSuccess(String response);
         void onFailure();
     }
+    static final String AUTHORIZATION_KEY = "Authorization";
+    static final String BEARER_VALUE = "Bearer %s";
     private static final int OK = 200;
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
@@ -59,7 +62,10 @@ public class BaseHttpClient {
     void doGet(String url, HttpClientListener listener){
         mListener = listener;
 
-        final Request request = new Request.Builder().url(url).build();
+        final Request request = new Request.Builder()
+                .url(url)
+                .addHeader(AUTHORIZATION_KEY, formatBearer())
+                .build();
         makeNew(request);
     }
 
@@ -87,6 +93,10 @@ public class BaseHttpClient {
                 }
             }
         });
+    }
+
+    private String formatBearer(){
+        return String.format(BEARER_VALUE, TwitterSearchManager.getInstance().getBearerToken());
     }
 
     private static class BaseOkhttp {

@@ -17,6 +17,7 @@
 package com.gemapps.tweetysearch.util;
 
 import com.gemapps.tweetysearch.networking.model.Bearer;
+import com.gemapps.tweetysearch.ui.model.TweetCollection;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -28,4 +29,7 @@ public class GsonUtil {
 
     public static final Gson BEARER_GSON = new GsonBuilder().registerTypeAdapter(Bearer.class,
             new TwitterDeserializer<Bearer>(null)).create();
+
+    public static final Gson TWEETS_GSON = new GsonBuilder().registerTypeAdapter(TweetCollection.class,
+            new TweetsDeserializer()).create();
 }

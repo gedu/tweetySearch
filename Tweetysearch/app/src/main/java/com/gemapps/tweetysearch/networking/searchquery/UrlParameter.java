@@ -16,8 +16,6 @@
 
 package com.gemapps.tweetysearch.networking.searchquery;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +37,6 @@ public final class UrlParameter {
             stringBuilder.append(URL_AND);
         }
         stringBuilder.deleteCharAt(stringBuilder.length() -1);
-        Log.d(TAG, "UrlParameter: "+stringBuilder.toString());
         mParams = stringBuilder.toString();
     }
 
@@ -52,11 +49,12 @@ public final class UrlParameter {
         List<Parameterizable> queries = new ArrayList<>();
 
         public void addParameter(Parameterizable parameter){
+            removeParameter(parameter);
             queries.add(parameter);
         }
 
         public void removeParameter(Parameterizable parameter){
-            queries.remove(parameter);
+            if(queries.contains(parameter)) queries.remove(parameter);
         }
 
         public List<Parameterizable> getQueries(){

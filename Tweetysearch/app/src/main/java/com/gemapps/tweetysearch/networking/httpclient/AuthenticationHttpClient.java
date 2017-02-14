@@ -14,11 +14,12 @@
  *    limitations under the License.
  */
 
-package com.gemapps.tweetysearch.networking;
+package com.gemapps.tweetysearch.networking.httpclient;
 
 import android.util.Log;
 
 import com.gemapps.tweetysearch.BuildConfig;
+import com.gemapps.tweetysearch.networking.TwitterSearchManager;
 import com.gemapps.tweetysearch.networking.model.Bearer;
 import com.gemapps.tweetysearch.util.GsonUtil;
 import com.squareup.okhttp.Headers;
@@ -35,7 +36,6 @@ public class AuthenticationHttpClient extends BaseHttpClient {
 
     private static final String TAG = "AuthenticationHttpClien";
 
-    private static final String AUTHORIZATION_KEY = "Authorization";
     private static final String AUTHORIZATION_VALUE = "Basic %s";
     private static final String CONTENT_TYPE_VALUE = "application/x-www-form-urlencoded;charset=UTF-8";
     private static final String BODY = "grant_type=client_credentials";

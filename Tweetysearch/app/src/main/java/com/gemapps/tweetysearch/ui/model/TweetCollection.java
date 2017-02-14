@@ -14,30 +14,32 @@
  *    limitations under the License.
  */
 
-package com.gemapps.tweetysearch.networking;
+package com.gemapps.tweetysearch.ui.model;
 
-import android.util.Log;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
 
 /**
  * Created by edu on 2/13/17.
  */
 
-public class SearchTweetsHttpClient extends BaseHttpClient {
+public class TweetCollection {
 
-    private static final String TAG = "SearchTweetsHttpClient";
+    @SerializedName("statuses")
+    private ArrayList<TweetItem> mTweetItems = new ArrayList<>();
 
-    public void getTweets(String url){
-        Log.d(TAG, "getTweets: URL: "+url);
-        doGet(url, new HttpClientListener() {
-            @Override
-            public void onSuccess(String response) {
-                Log.d(TAG, "onSuccess: "+response);
-            }
+    public TweetCollection() {}
 
-            @Override
-            public void onFailure() {
-                Log.d(TAG, "onFailure: ");
-            }
-        });
+    public void addTweet(TweetItem tweetItem){
+        mTweetItems.add(tweetItem);
+    }
+
+    public ArrayList<TweetItem> getTweetItems() {
+        return mTweetItems;
+    }
+
+    public void setTweetItems(ArrayList<TweetItem> tweetItems) {
+        mTweetItems = tweetItems;
     }
 }

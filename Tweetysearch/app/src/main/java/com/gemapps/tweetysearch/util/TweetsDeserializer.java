@@ -16,9 +16,10 @@
 
 package com.gemapps.tweetysearch.util;
 
-import android.support.annotation.Nullable;
-
+import com.gemapps.tweetysearch.ui.model.TweetCollection;
+import com.gemapps.tweetysearch.ui.model.TweetItem;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -30,19 +31,23 @@ import java.lang.reflect.Type;
  * Created by edu on 2/13/17.
  */
 
-public class TwitterDeserializer<T> implements JsonDeserializer<T> {
-
-    private static final String TAG = "TwitterDeserializer";
-    private String mKey;
-
-    public TwitterDeserializer(@Nullable String key) {
-        mKey = key;
-    }
+public class TweetsDeserializer implements JsonDeserializer<TweetCollection> {
+    private static final String TAG = "TwitterArrayDeserialize";
+    private static final String STATUS_KEY = "statuses";
 
     @Override
-    public T deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+    public TweetCollection deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
-        if(mKey != null) json = json.getAsJsonObject().get(mKey);
-        return new Gson().fromJson(json, typeOfT);
+
+        TweetCollection tweetsCollection = new TweetCollection();
+        json = json.getAsJsonObject().get(STATUS_KEY);
+        JsonArray statuses = json.getAsJsonArray();
+
+        for (JsonElement element : statuses) {
+            TweetItem tweetItem = new Gson().fromJson(element, TweetItem.class);
+            tweetsCollection.addTweet(tweetItem);
+        }
+
+        return tweetsCollection;
     }
 }

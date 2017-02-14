@@ -16,6 +16,10 @@
 
 package com.gemapps.tweetysearch.networking;
 
+import android.util.Log;
+
+import com.gemapps.tweetysearch.networking.httpclient.AuthenticationHttpClient;
+import com.gemapps.tweetysearch.networking.httpclient.SearchTweetsHttpClient;
 import com.gemapps.tweetysearch.networking.model.Bearer;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 
@@ -37,27 +41,43 @@ public class TwitterSearchManager {
         return mInstance;
     }
 
-    private boolean mFirstSearch = false;
+    private boolean mFirstSearch = true;
     private Realm mRealm;
     private Bearer mBearer;
 
     private TwitterSearchManager(){
         mRealm = Realm.getDefaultInstance();
+        mBearer = mRealm.where(Bearer.class).findFirst();
     }
 
     public void authenticate(){
-        mBearer = mRealm.where(Bearer.class).findFirstAsync();
-        if(!mBearer.isValid()) {
+        if(!bearerExist()) {
+            Log.d(TAG, "authenticate");
+            mBearer = mRealm.where(Bearer.class).findFirstAsync();
             new AuthenticationHttpClient().authenticate(TWITTER_OAUTH_URL);
         }
     }
 
+    private boolean bearerExist(){
+        return mBearer != null;
+    }
+
     public void search(UrlParameter urlParameter){
 
-        new SearchTweetsHttpClient().getTweets(TWITTER_BASE_URL + urlParameter.getParameters());
+        if(mFirstSearch) {
+            new SearchTweetsHttpClient()
+                    .getTweets(TWITTER_BASE_URL + urlParameter.getParameters());
+        }else{
+
+        }
     }
+
 
     public Realm getRealm(){
         return mRealm;
+    }
+
+    public String getBearerToken(){
+        return mBearer.getToken();
     }
 }
