@@ -18,10 +18,12 @@ package com.gemapps.tweetysearch.ui.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+
 /**
  * Created by edu on 2/13/17.
  */
-public class User {
+public class User extends RealmObject {
 
     @SerializedName("description")
     private String mDescription;

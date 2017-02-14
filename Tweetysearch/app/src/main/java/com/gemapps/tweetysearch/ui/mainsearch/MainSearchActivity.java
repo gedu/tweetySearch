@@ -18,10 +18,18 @@ package com.gemapps.tweetysearch.ui.mainsearch;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.gemapps.tweetysearch.R;
 import com.gemapps.tweetysearch.networking.TwitterSearchManager;
+import com.gemapps.tweetysearch.networking.model.NetworkResponseBridge;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
+import com.gemapps.tweetysearch.ui.model.TweetCollection;
+import com.gemapps.tweetysearch.ui.model.TweetItem;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class MainSearchActivity extends AppCompatActivity
         implements MainSearchFragment.OnSearchListener {
@@ -34,6 +42,18 @@ public class MainSearchActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_search);
         addSearchContent(savedInstanceState);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     private void addSearchContent(Bundle savedInstanceState){
@@ -52,4 +72,16 @@ public class MainSearchActivity extends AppCompatActivity
     public void onSearch(UrlParameter urlParameter) {
         TwitterSearchManager.getInstance().search(urlParameter);
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNetworkResponseEvent(NetworkResponseBridge response){
+
+        if(response.getType() == NetworkResponseBridge.TWEETS_SEARCH){
+            TweetCollection tweetCollection = (TweetCollection) response.getContent();
+            for (TweetItem t : tweetCollection.getTweetItems()){
+                Log.d(TAG, "TWEET: "+t.getText());
+            }
+        }
+    }
+
 }

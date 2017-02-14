@@ -26,8 +26,8 @@ import android.view.ViewGroup;
 import com.gemapps.tweetysearch.R;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 import com.gemapps.tweetysearch.networking.searchquery.paramquery.Query;
+import com.gemapps.tweetysearch.ui.ButterFragment;
 
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -38,7 +38,7 @@ import butterknife.OnClick;
  * Use the {@link MainSearchFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainSearchFragment extends Fragment {
+public class MainSearchFragment extends ButterFragment {
 
     private static final String TAG = "MainSearchFragment";
     public interface OnSearchListener {
@@ -62,10 +62,13 @@ public class MainSearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setupQueryBuilder();
+    }
+
+    private void setupQueryBuilder(){
         mParameterBuilder = new UrlParameter.Builder();
         mQuery = new Query("");
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -81,16 +84,15 @@ public class MainSearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_main_search, container, false);
-        ButterKnife.bind(this, root);
-        mViewHelper = new MainSearchViewHelper(root);
+        View rootView = createView(inflater, container, R.layout.fragment_main_search);
+        mViewHelper = new MainSearchViewHelper(rootView);
         mViewHelper.addSearchClickListener(new MainSearchViewHelper.SearchClickListener() {
             @Override
             public void onSearchClicked() {
                 onSearchPressed();
             }
         });
-        return root;
+        return rootView;
     }
 
     @OnClick(R.id.query_search_button)
@@ -105,7 +107,6 @@ public class MainSearchFragment extends Fragment {
             mListener.onSearch(mParameterBuilder.build());
         }
     }
-
 
     @Override
     public void onDetach() {

@@ -20,6 +20,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by edu on 2/13/17.
  */
@@ -28,6 +30,8 @@ public class TweetCollection {
 
     @SerializedName("statuses")
     private ArrayList<TweetItem> mTweetItems = new ArrayList<>();
+    @PrimaryKey
+    private String mId;
 
     public TweetCollection() {}
 
@@ -41,5 +45,13 @@ public class TweetCollection {
 
     public void setTweetItems(ArrayList<TweetItem> tweetItems) {
         mTweetItems = tweetItems;
+    }
+
+    public String getId() {
+        return mId;
+    }
+
+    public void setId(String id) {
+        mId = id;
     }
 }

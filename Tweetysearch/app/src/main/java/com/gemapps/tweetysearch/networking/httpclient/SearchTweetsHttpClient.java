@@ -18,8 +18,11 @@ package com.gemapps.tweetysearch.networking.httpclient;
 
 import android.util.Log;
 
+import com.gemapps.tweetysearch.networking.model.NetworkResponseBridge;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
 import com.gemapps.tweetysearch.util.GsonUtil;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by edu on 2/13/17.
@@ -31,18 +34,19 @@ public class SearchTweetsHttpClient extends BaseHttpClient {
 
     public void getTweets(String url){
         Log.d(TAG, "getTweets: URL: "+url);
-        doGet(url, new HttpClientListener() {
-            @Override
-            public void onSuccess(String response) {
+        doGet(url);
+    }
 
-                TweetCollection collection = GsonUtil.TWEETS_GSON.fromJson(response, TweetCollection.class);
-                Log.d(TAG, "onSuccess: "+collection.getTweetItems().size());
-            }
+    @Override
+    protected void onSuccess(String body) {
+        TweetCollection collection = GsonUtil.TWEETS_GSON.fromJson(body, TweetCollection.class);
+        Log.d(TAG, "onSuccess: "+collection.getTweetItems().size());
+        NetworkResponseBridge response = new NetworkResponseBridge<>(NetworkResponseBridge.TWEETS_SEARCH, collection);
+        EventBus.getDefault().post(response);
+    }
 
-            @Override
-            public void onFailure() {
-                Log.d(TAG, "onFailure: ");
-            }
-        });
+    @Override
+    protected void onFail() {
+        Log.d(TAG, "onFail: ");
     }
 }

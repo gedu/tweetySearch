@@ -41,24 +41,7 @@ public class AuthenticationHttpClient extends BaseHttpClient {
     private static final String BODY = "grant_type=client_credentials";
 
     public void authenticate(String url){
-        doPost(url, buildHeader(), buildRequestBody(), new HttpClientListener() {
-            @Override
-            public void onSuccess(final String response) {
-                TwitterSearchManager.getInstance()
-                        .getRealm().executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        Bearer bearer = GsonUtil.BEARER_GSON.fromJson(response, Bearer.class);
-                        realm.insertOrUpdate(bearer);
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure() {
-                Log.d(TAG, "onFailure() called");
-            }
-        });
+        doPost(url, buildHeader(), buildRequestBody());
     }
 
     private Headers buildHeader(){
@@ -69,5 +52,22 @@ public class AuthenticationHttpClient extends BaseHttpClient {
 
     private RequestBody buildRequestBody(){
         return RequestBody.create(MediaType.parse(CONTENT_TYPE_VALUE), BODY);
+    }
+
+    @Override
+    protected void onSuccess(final String body) {
+        TwitterSearchManager.getInstance()
+                .getRealm().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                Bearer bearer = GsonUtil.BEARER_GSON.fromJson(body, Bearer.class);
+                realm.insertOrUpdate(bearer);
+            }
+        });
+    }
+
+    @Override
+    protected void onFail() {
+        Log.d(TAG, "onFailure() called");
     }
 }

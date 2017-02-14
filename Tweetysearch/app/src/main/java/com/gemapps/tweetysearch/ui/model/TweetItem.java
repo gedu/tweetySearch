@@ -18,11 +18,13 @@ package com.gemapps.tweetysearch.ui.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+
 /**
  * Created by edu on 2/13/17.
  */
 
-public class TweetItem {
+public class TweetItem extends RealmObject {
 
     @SerializedName("id_str")
     private String mIdStr;

@@ -34,7 +34,7 @@ import java.io.IOException;
  *
  * Base class to use the Tweeter API
  */
-public class BaseHttpClient {
+public abstract class BaseHttpClient {
 
     private static final String TAG = "BaseHttpClient";
     public interface HttpClientListener {
@@ -46,11 +46,9 @@ public class BaseHttpClient {
     private static final int OK = 200;
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
-    private HttpClientListener mListener;
 
-    void doPost(String url, Headers headers, RequestBody body, HttpClientListener listener){
+    void doPost(String url, Headers headers, RequestBody body){
 
-        mListener = listener;
         final Request request = new Request.Builder()
                 .headers(headers)
                 .url(url)
@@ -59,9 +57,7 @@ public class BaseHttpClient {
         makeNew(request);
     }
 
-    void doGet(String url, HttpClientListener listener){
-        mListener = listener;
-
+    void doGet(String url){
         final Request request = new Request.Builder()
                 .url(url)
                 .addHeader(AUTHORIZATION_KEY, formatBearer())
@@ -74,7 +70,7 @@ public class BaseHttpClient {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                mListener.onFailure();
+                onFail();
             }
 
             @Override
@@ -85,11 +81,11 @@ public class BaseHttpClient {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            mListener.onSuccess(body);
+                            onSuccess(body);
                         }
                     });
                 }else{
-                    mListener.onFailure();
+                    onFail();
                 }
             }
         });
@@ -98,6 +94,9 @@ public class BaseHttpClient {
     private String formatBearer(){
         return String.format(BEARER_VALUE, TwitterSearchManager.getInstance().getBearerToken());
     }
+
+    protected abstract void onSuccess(String body);
+    protected abstract void onFail();
 
     private static class BaseOkhttp {
 

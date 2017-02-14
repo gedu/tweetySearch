@@ -14,30 +14,27 @@
  *    limitations under the License.
  */
 
-package com.gemapps.tweetysearch;
+package com.gemapps.tweetysearch.ui;
 
-import android.app.Application;
+import android.support.annotation.LayoutRes;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import com.gemapps.tweetysearch.networking.TwitterSearchManager;
-
-import org.greenrobot.eventbus.EventBus;
-
-import io.realm.Realm;
+import butterknife.ButterKnife;
 
 /**
- * Created by edu on 2/13/17.
+ * Created by edu on 2/14/17.
+ * Wrapper Fragment to bind with ButterKnife
  */
+public class ButterFragment extends Fragment {
 
-public class TweetyApplication extends Application {
+    protected View createView(LayoutInflater inflater, ViewGroup container,
+                              @LayoutRes int layoutId){
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        Realm.init(this);
-        EventBus.builder()
-                .logNoSubscriberMessages(false)
-                .installDefaultEventBus();
-        TwitterSearchManager.getInstance().authenticate();
+        View rootView = inflater.inflate(layoutId, container, false);
+        ButterKnife.bind(this, rootView);
+        return rootView;
     }
 }

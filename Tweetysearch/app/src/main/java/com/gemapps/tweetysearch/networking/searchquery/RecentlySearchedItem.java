@@ -14,30 +14,27 @@
  *    limitations under the License.
  */
 
-package com.gemapps.tweetysearch;
+package com.gemapps.tweetysearch.networking.searchquery;
 
-import android.app.Application;
-
-import com.gemapps.tweetysearch.networking.TwitterSearchManager;
-
-import org.greenrobot.eventbus.EventBus;
-
-import io.realm.Realm;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by edu on 2/13/17.
+ * Created by edu on 2/14/17.
  */
 
-public class TweetyApplication extends Application {
+public class RecentlySearchedItem extends RealmObject {
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    @PrimaryKey
+    private String mUrlParams;
 
-        Realm.init(this);
-        EventBus.builder()
-                .logNoSubscriberMessages(false)
-                .installDefaultEventBus();
-        TwitterSearchManager.getInstance().authenticate();
+    public RecentlySearchedItem() {}
+
+    public String getUrlParams() {
+        return mUrlParams;
+    }
+
+    public void setUrlParams(String urlParams) {
+        mUrlParams = urlParams;
     }
 }

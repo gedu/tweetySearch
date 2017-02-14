@@ -19,6 +19,8 @@ package com.gemapps.tweetysearch.networking.searchquery;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+
 /**
  * Created by edu on 2/12/17.
  */
@@ -28,6 +30,7 @@ public final class UrlParameter {
     private static final String TAG = "UrlParameter";
     private static final String URL_AND ="&";
     private String mParams;
+    private RecentlySearchedItem mSearchedItem;
 
     private UrlParameter(Builder builder) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -38,6 +41,20 @@ public final class UrlParameter {
         }
         stringBuilder.deleteCharAt(stringBuilder.length() -1);
         mParams = stringBuilder.toString();
+        mSearchedItem = new RecentlySearchedItem();
+        mSearchedItem.setUrlParams(mParams);
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.insertOrUpdate(mSearchedItem);
+            }
+        });
+        realm.close();
+    }
+
+    public RecentlySearchedItem getSearchedItem() {
+        return mSearchedItem;
     }
 
     public String getParameters(){

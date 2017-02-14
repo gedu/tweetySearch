@@ -64,12 +64,12 @@ public class TwitterSearchManager {
 
     public void search(UrlParameter urlParameter){
 
-        if(mFirstSearch) {
+//        if(mFirstSearch) {
             new SearchTweetsHttpClient()
                     .getTweets(TWITTER_BASE_URL + urlParameter.getParameters());
-        }else{
-
-        }
+//        }else{
+            //// TODO: 2/14/17 use max_id for next searches for the same params
+//        }
     }
 
 
