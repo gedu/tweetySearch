@@ -42,7 +42,7 @@ public abstract class BaseHttpClient {
         void onFailure();
     }
     static final String AUTHORIZATION_KEY = "Authorization";
-    static final String BEARER_VALUE = "Bearer %s";
+    private static final String BEARER_VALUE = "Bearer %s";
     private static final int OK = 200;
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
@@ -52,14 +52,16 @@ public abstract class BaseHttpClient {
         final Request request = new Request.Builder()
                 .headers(headers)
                 .url(url)
+                .tag(OK)
                 .post(body)
                 .build();
         makeNew(request);
     }
 
-    void doGet(String url){
+    void doGet(String url, int tag){
         final Request request = new Request.Builder()
                 .url(url)
+                .tag(tag)
                 .addHeader(AUTHORIZATION_KEY, formatBearer())
                 .build();
         makeNew(request);
@@ -76,12 +78,13 @@ public abstract class BaseHttpClient {
             @Override
             public void onResponse(Response response) throws IOException {
                 final String body = response.body().string();
+                final int tag = (int) response.request().tag();
                 response.body().close();
                 if(response.code() == OK) {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            onSuccess(body);
+                            onSuccess(body, tag);
                         }
                     });
                 }else{
@@ -95,7 +98,7 @@ public abstract class BaseHttpClient {
         return String.format(BEARER_VALUE, TwitterSearchManager.getInstance().getBearerToken());
     }
 
-    protected abstract void onSuccess(String body);
+    protected abstract void onSuccess(String body, int tag);
     protected abstract void onFail();
 
     private static class BaseOkhttp {

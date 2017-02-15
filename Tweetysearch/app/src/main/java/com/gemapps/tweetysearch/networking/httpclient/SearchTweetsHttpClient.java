@@ -32,20 +32,24 @@ public class SearchTweetsHttpClient extends BaseHttpClient {
 
     private static final String TAG = "SearchTweetsHttpClient";
     private static final String MAX_ID_PARAM = "&max_id=%s";
+    private static final String SINCE_ID_PARAM = "&since_id=%s";
 
     public void getTweets(String url){
-        Log.d(TAG, "getTweets: URL: "+url);
-        doGet(url);
+        doGet(url, NetworkResponseBridge.TWEETS_SEARCH);
     }
 
     public void getTweetsWithMaxId(String url, long maxId) {
-        doGet(url+String.format(MAX_ID_PARAM, maxId));
+        doGet(url+String.format(MAX_ID_PARAM, maxId), NetworkResponseBridge.TWEETS_LOAD_MORE);
+    }
+
+    public void getTweetsWithSinceId(String url, long tweetSinceId) {
+        doGet(url+String.format(SINCE_ID_PARAM, tweetSinceId), NetworkResponseBridge.TWEETS_LOAD_NEW);
     }
 
     @Override
-    protected void onSuccess(String body) {
+    protected void onSuccess(String body, int tag) {
         TweetCollection collection = GsonUtil.TWEETS_GSON.fromJson(body, TweetCollection.class);
-        NetworkResponseBridge response = new NetworkResponseBridge<>(NetworkResponseBridge.TWEETS_SEARCH, collection);
+        NetworkResponseBridge response = new NetworkResponseBridge<>(tag, collection);
         EventBus.getDefault().post(response);
     }
 

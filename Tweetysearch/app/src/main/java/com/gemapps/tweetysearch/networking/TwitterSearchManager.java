@@ -16,8 +16,6 @@
 
 package com.gemapps.tweetysearch.networking;
 
-import android.util.Log;
-
 import com.gemapps.tweetysearch.networking.httpclient.AuthenticationHttpClient;
 import com.gemapps.tweetysearch.networking.httpclient.SearchTweetsHttpClient;
 import com.gemapps.tweetysearch.networking.model.Bearer;
@@ -36,6 +34,7 @@ public class TwitterSearchManager {
     private static final String TWITTER_OAUTH_URL = "https://api.twitter.com/oauth2/token";
 
     private static final long INVALID_MAX_ID = -1;
+    private static final long INVALID_SINCE_ID = -1;
 
     private static TwitterSearchManager mInstance;
     public static TwitterSearchManager getInstance(){
@@ -49,6 +48,7 @@ public class TwitterSearchManager {
     private UrlParameter mCurrentSearch;
     private boolean mFirstSearch = true;
     private long mTweetMaxId = INVALID_MAX_ID;
+    private long mTweetSinceId = INVALID_SINCE_ID;
 
 
     private TwitterSearchManager(){
@@ -58,7 +58,6 @@ public class TwitterSearchManager {
 
     public void authenticate(){
         if(!bearerExist()) {
-            Log.d(TAG, "authenticate");
             mBearer = mRealm.where(Bearer.class).findFirstAsync();
             new AuthenticationHttpClient().authenticate(TWITTER_OAUTH_URL);
         }
@@ -69,20 +68,26 @@ public class TwitterSearchManager {
     }
 
     public void search(UrlParameter urlParameter){
-
         mCurrentSearch = urlParameter;
-//        if(mFirstSearch) {
+        new SearchTweetsHttpClient()
+                .getTweets(TWITTER_BASE_URL + urlParameter.getParameters());
+    }
+
+    public void loadNew(){
+        if(mTweetSinceId != INVALID_SINCE_ID){
             new SearchTweetsHttpClient()
-                    .getTweets(TWITTER_BASE_URL + urlParameter.getParameters());
-//        }else{
-            //// TODO: 2/14/17 use max_id for next searches for the same params
-//        }
+                    .getTweetsWithSinceId(TWITTER_BASE_URL + mCurrentSearch.getParameters(),
+                            mTweetSinceId);
+        }else{
+            search(mCurrentSearch);
+        }
     }
 
     public void loadMore(){
         if(mTweetMaxId != INVALID_MAX_ID){
             new SearchTweetsHttpClient()
-                    .getTweetsWithMaxId(TWITTER_BASE_URL + mCurrentSearch.getParameters(), mTweetMaxId);
+                    .getTweetsWithMaxId(TWITTER_BASE_URL + mCurrentSearch.getParameters(),
+                            mTweetMaxId);
         }else{
             search(mCurrentSearch);
         }
@@ -90,6 +95,10 @@ public class TwitterSearchManager {
 
     public void setTweetMaxId(long maxId){
         mTweetMaxId = maxId;
+    }
+
+    public void setTweetSinceId(long sinceId){
+        mTweetSinceId = sinceId;
     }
 
     public Realm getRealm(){

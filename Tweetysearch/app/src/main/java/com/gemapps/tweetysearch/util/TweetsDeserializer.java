@@ -55,16 +55,24 @@ public class TweetsDeserializer implements JsonDeserializer<TweetCollection> {
     private TweetCollection populateTweetsWith(JsonArray statuses){
         TweetCollection tweetsCollection = new TweetCollection();
         long lowestId = Long.MAX_VALUE;
+        long higherId = Long.MIN_VALUE;
+        //// TODO: 2/15/17 CHECK IF ALWAYS THE LAST ITEM IS THE LOWEST AND THE FIRST IS THE HIGHEST
         for (JsonElement element : statuses) {
             TweetItem tweetItem = new Gson().fromJson(element, TweetItem.class);
 
-            if(tweetItem.getId() < lowestId){
-                lowestId = tweetItem.getId();
+            long id = tweetItem.getId();
+            if(id < lowestId){
+                lowestId = id;
+            }
+
+            if(id > higherId){
+                higherId = id;
             }
 
             tweetsCollection.addTweet(tweetItem);
         }
         TwitterSearchManager.getInstance().setTweetMaxId(lowestId - REMOVE_REDUNDANT_ID);
+        TwitterSearchManager.getInstance().setTweetSinceId(higherId);
         return tweetsCollection;
     }
 }

@@ -92,10 +92,15 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
         return mTweetItems.get(position).getUser() == null ? VIEW_LOADING_TYPE : VIEW_TWEET_TYPE;
     }
 
-    public void addTweets(RealmList<TweetItem> newTweets) {
+    public void addTweetsAtEnd(RealmList<TweetItem> newTweets) {
         int insertedPosition = getItemCount();
         mTweetItems.addAll(newTweets);
         notifyItemRangeInserted(insertedPosition, newTweets.size());
+    }
+
+    public void addTweetsAtStart(RealmList<TweetItem> newTweets) {
+        mTweetItems.addAll(0, newTweets);
+        notifyItemRangeInserted(0, newTweets.size());
     }
 
     public void addProgressItem(){

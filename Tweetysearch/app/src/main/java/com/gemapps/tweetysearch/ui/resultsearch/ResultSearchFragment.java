@@ -17,10 +17,13 @@
 package com.gemapps.tweetysearch.ui.resultsearch;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +58,7 @@ public class ResultSearchFragment extends ButterFragment {
 
     private ResultRecyclerAdapter mAdapter;
     private boolean mIsLoadingMore = false;
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     public ResultSearchFragment() {
         // Required empty public constructor
@@ -90,7 +94,8 @@ public class ResultSearchFragment extends ButterFragment {
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
+                Log.d(TAG, "onRefresh");
+                TwitterSearchManager.getInstance().loadNew();
             }
         });
     }
@@ -109,20 +114,31 @@ public class ResultSearchFragment extends ButterFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNetworkResponseEvent(NetworkResponseBridge response){
-
-        if(response.getType() == NetworkResponseBridge.TWEETS_SEARCH){
-            TweetCollection tweetCollection = (TweetCollection) response.getContent();
-            RealmList<TweetItem> realmList = tweetCollection.getTweetItems();
-            mAdapter.addTweets(realmList);
-            mAdapter.notifyDataSetChanged();
-            if(mIsLoadingMore) {
-                mIsLoadingMore = false;
-                mAdapter.removeProgressItem();
-            }
-            if(mRefreshLayout.isRefreshing()) {
-                mRefreshLayout.setRefreshing(false);
-            }
+        TweetCollection tweetCollection = (TweetCollection) response.getContent();
+        switch(response.getType()){
+            case NetworkResponseBridge.TWEETS_SEARCH: addNewTweets(tweetCollection.getTweetItems());
+                break;
+            case NetworkResponseBridge.TWEETS_LOAD_MORE: handleLoadMoreTweets(tweetCollection.getTweetItems());
+                break;
+            case NetworkResponseBridge.TWEETS_LOAD_NEW: handleLoadNewTweets(tweetCollection.getTweetItems());
+                break;
         }
+    }
+
+    private void addNewTweets(RealmList<TweetItem> tweets) {
+        mAdapter.addTweetsAtEnd(tweets);
+    }
+
+    private void handleLoadMoreTweets(RealmList<TweetItem> tweets){
+        mIsLoadingMore = false;
+        mAdapter.removeProgressItem();
+        addNewTweets(tweets);
+    }
+
+    private void handleLoadNewTweets(RealmList<TweetItem> tweets){
+        mRefreshLayout.setRefreshing(false);
+        mAdapter.addTweetsAtStart(tweets);
+        mResultView.smoothScrollToPosition(0);
     }
 
     private final RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
@@ -145,9 +161,16 @@ public class ResultSearchFragment extends ButterFragment {
     };
 
     private void loadMoreTweets(){
-        mIsLoadingMore = true;
-        mAdapter.addProgressItem();
-        TwitterSearchManager.getInstance().loadMore();
+        mHandler.post(mLoadMoreRunnable);
     }
+
+    private final Runnable mLoadMoreRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mIsLoadingMore = true;
+            mAdapter.addProgressItem();
+            TwitterSearchManager.getInstance().loadMore();
+        }
+    };
 
 }

@@ -31,6 +31,8 @@ public class NetworkResponseBridge<T> {
     @Retention(RetentionPolicy.SOURCE)
     public @interface NetworkResponseType{}
     public static final int TWEETS_SEARCH = 0;
+    public static final int TWEETS_LOAD_MORE = 1;
+    public static final int TWEETS_LOAD_NEW = 2;
 
     private @NetworkResponseType int mType;
     private T mContent;

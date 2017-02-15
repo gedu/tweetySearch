@@ -55,7 +55,7 @@ public class AuthenticationHttpClient extends BaseHttpClient {
     }
 
     @Override
-    protected void onSuccess(final String body) {
+    protected void onSuccess(final String body, int tag) {
         TwitterSearchManager.getInstance()
                 .getRealm().executeTransaction(new Realm.Transaction() {
             @Override
