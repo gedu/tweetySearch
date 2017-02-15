@@ -35,15 +35,21 @@ public class TwitterSearchManager {
     private static final String TWITTER_BASE_URL = "https://api.twitter.com/1.1/search/tweets.json?";
     private static final String TWITTER_OAUTH_URL = "https://api.twitter.com/oauth2/token";
 
+    private static final long INVALID_MAX_ID = -1;
+
     private static TwitterSearchManager mInstance;
     public static TwitterSearchManager getInstance(){
         if(mInstance == null) mInstance = new TwitterSearchManager();
         return mInstance;
     }
 
-    private boolean mFirstSearch = true;
     private Realm mRealm;
     private Bearer mBearer;
+
+    private UrlParameter mCurrentSearch;
+    private boolean mFirstSearch = true;
+    private long mTweetMaxId = INVALID_MAX_ID;
+
 
     private TwitterSearchManager(){
         mRealm = Realm.getDefaultInstance();
@@ -64,6 +70,7 @@ public class TwitterSearchManager {
 
     public void search(UrlParameter urlParameter){
 
+        mCurrentSearch = urlParameter;
 //        if(mFirstSearch) {
             new SearchTweetsHttpClient()
                     .getTweets(TWITTER_BASE_URL + urlParameter.getParameters());
@@ -72,6 +79,18 @@ public class TwitterSearchManager {
 //        }
     }
 
+    public void loadMore(){
+        if(mTweetMaxId != INVALID_MAX_ID){
+            new SearchTweetsHttpClient()
+                    .getTweetsWithMaxId(TWITTER_BASE_URL + mCurrentSearch.getParameters(), mTweetMaxId);
+        }else{
+            search(mCurrentSearch);
+        }
+    }
+
+    public void setTweetMaxId(long maxId){
+        mTweetMaxId = maxId;
+    }
 
     public Realm getRealm(){
         return mRealm;

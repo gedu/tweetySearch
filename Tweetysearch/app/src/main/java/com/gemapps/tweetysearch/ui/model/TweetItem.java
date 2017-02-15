@@ -29,7 +29,7 @@ public class TweetItem extends RealmObject {
     @SerializedName("id_str")
     private String mIdStr;
     @SerializedName("id")
-    private int mId;
+    private long mId;
     @SerializedName("text")
     private String mText;
     @SerializedName("created_at")
@@ -47,11 +47,11 @@ public class TweetItem extends RealmObject {
         mIdStr = idStr;
     }
 
-    public int getId() {
+    public long getId() {
         return mId;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         mId = id;
     }
 

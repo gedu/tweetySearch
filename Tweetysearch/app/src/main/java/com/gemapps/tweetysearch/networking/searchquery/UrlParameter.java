@@ -33,6 +33,11 @@ public final class UrlParameter {
     private RecentlySearchedItem mSearchedItem;
 
     private UrlParameter(Builder builder) {
+        concatenateParams(builder);
+        save();
+    }
+
+    private void concatenateParams(Builder builder){
         StringBuilder stringBuilder = new StringBuilder();
         for (Parameterizable param : builder.queries) {
 
@@ -41,6 +46,9 @@ public final class UrlParameter {
         }
         stringBuilder.deleteCharAt(stringBuilder.length() -1);
         mParams = stringBuilder.toString();
+    }
+
+    private void save(){
         mSearchedItem = new RecentlySearchedItem();
         mSearchedItem.setUrlParams(mParams);
         Realm realm = Realm.getDefaultInstance();

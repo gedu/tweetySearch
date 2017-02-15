@@ -16,6 +16,7 @@
 
 package com.gemapps.tweetysearch.util;
 
+import com.gemapps.tweetysearch.networking.TwitterSearchManager;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
 import com.gemapps.tweetysearch.ui.model.TweetItem;
 import com.google.gson.Gson;
@@ -34,20 +35,36 @@ import java.lang.reflect.Type;
 public class TweetsDeserializer implements JsonDeserializer<TweetCollection> {
     private static final String TAG = "TwitterArrayDeserialize";
     private static final String STATUS_KEY = "statuses";
+    private static final int REMOVE_REDUNDANT_ID = 1;
 
     @Override
     public TweetCollection deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
+        return parse(json);
+    }
 
+    private TweetCollection parse(JsonElement json){
+        JsonArray tweetsData = getTweetsData(json);
+        return populateTweetsWith(tweetsData);
+    }
+
+    private JsonArray getTweetsData(JsonElement json){
+        return json.getAsJsonObject().get(STATUS_KEY).getAsJsonArray();
+    }
+
+    private TweetCollection populateTweetsWith(JsonArray statuses){
         TweetCollection tweetsCollection = new TweetCollection();
-        json = json.getAsJsonObject().get(STATUS_KEY);
-        JsonArray statuses = json.getAsJsonArray();
-
+        long lowestId = Long.MAX_VALUE;
         for (JsonElement element : statuses) {
             TweetItem tweetItem = new Gson().fromJson(element, TweetItem.class);
+
+            if(tweetItem.getId() < lowestId){
+                lowestId = tweetItem.getId();
+            }
+
             tweetsCollection.addTweet(tweetItem);
         }
-
+        TwitterSearchManager.getInstance().setTweetMaxId(lowestId - REMOVE_REDUNDANT_ID);
         return tweetsCollection;
     }
 }

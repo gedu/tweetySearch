@@ -18,6 +18,7 @@ package com.gemapps.tweetysearch.ui.resultsearch;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gemapps.tweetysearch.R;
+import com.gemapps.tweetysearch.networking.TwitterSearchManager;
 import com.gemapps.tweetysearch.networking.model.NetworkResponseBridge;
 import com.gemapps.tweetysearch.ui.butter.ButterFragment;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
@@ -44,11 +46,15 @@ import io.realm.RealmList;
 public class ResultSearchFragment extends ButterFragment {
 
     private static final String TAG = "ResultSearchFragment";
+    private static final int LOAD_WINDOW_COUNT = 3;
 
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout mRefreshLayout;
     @BindView(R.id.result_recycler_view)
     RecyclerView mResultView;
 
     private ResultRecyclerAdapter mAdapter;
+    private boolean mIsLoadingMore = false;
 
     public ResultSearchFragment() {
         // Required empty public constructor
@@ -80,6 +86,13 @@ public class ResultSearchFragment extends ButterFragment {
         super.onViewCreated(view, savedInstanceState);
         mResultView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mResultView.setAdapter(mAdapter);
+        mResultView.addOnScrollListener(mScrollListener);
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+            }
+        });
     }
 
     @Override
@@ -100,9 +113,41 @@ public class ResultSearchFragment extends ButterFragment {
         if(response.getType() == NetworkResponseBridge.TWEETS_SEARCH){
             TweetCollection tweetCollection = (TweetCollection) response.getContent();
             RealmList<TweetItem> realmList = tweetCollection.getTweetItems();
-            mAdapter.addItems(realmList);
+            mAdapter.addTweets(realmList);
             mAdapter.notifyDataSetChanged();
+            if(mIsLoadingMore) {
+                mIsLoadingMore = false;
+                mAdapter.removeProgressItem();
+            }
+            if(mRefreshLayout.isRefreshing()) {
+                mRefreshLayout.setRefreshing(false);
+            }
         }
+    }
+
+    private final RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+
+            if(dy > 0){
+                int tweetsAmount = mResultView.getLayoutManager().getItemCount();
+                int lastVisibleItem = ((LinearLayoutManager)mResultView.getLayoutManager())
+                        .findLastVisibleItemPosition();
+
+                //how many of tweets should have below the current scroll position before loading more
+                if(!mIsLoadingMore && tweetsAmount <= (lastVisibleItem + LOAD_WINDOW_COUNT)){
+                    loadMoreTweets();
+                }
+
+            }
+        }
+    };
+
+    private void loadMoreTweets(){
+        mIsLoadingMore = true;
+        mAdapter.addProgressItem();
+        TwitterSearchManager.getInstance().loadMore();
     }
 
 }

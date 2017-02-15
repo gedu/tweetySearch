@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gemapps.tweetysearch.R;
@@ -35,36 +36,50 @@ import io.realm.RealmList;
 /**
  * Created by edu on 2/14/17.
  */
-public class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.TweetViewHolder> {
+public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder> {
 
+    private static final int VIEW_LOADING_TYPE = 0;
+    private static final int VIEW_TWEET_TYPE = 1;
     private Context mContext;
     private RealmList<TweetItem> mTweetItems;
+    private TweetItem mProgressItem;//TODO: update this to manage in a better way
 
     public ResultRecyclerAdapter(Context context, RealmList<TweetItem> items) {
         mContext = context;
         this.mTweetItems = items;
+        mProgressItem = new TweetItem();
     }
 
     @Override
-    public TweetViewHolder onCreateViewHolder(ViewGroup parent,
+    public ButterViewHolder onCreateViewHolder(ViewGroup parent,
                                               int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.result_item_list, parent, false);
-        return new TweetViewHolder(v);
+        if(viewType == VIEW_TWEET_TYPE) {
+            View tweetView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.result_item_list, parent, false);
+            return new TweetViewHolder(tweetView);
+        }else{
+            View progressView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.bottom_progress_item_list, parent, false);
+            return new LoadingViewHolder(progressView);
+        }
     }
 
     @Override
-    public void onBindViewHolder(TweetViewHolder holder, int position) {
-        TweetItem item = mTweetItems.get(position);
+    public void onBindViewHolder(ButterViewHolder holder, int position) {
 
-        holder.mUserNameText.setText(item.getUser().getName());
-        holder.mTweetCreatedDateText.setText(item.getCreatedAt());
-        holder.mTweetDescriptionText.setText(item.getText());
-        holder.mUserFavouriteCountText.setText(item.getUser().getFollowersCount());
-        Picasso.with(mContext)
-                .load(item.getUser().getProfileImageUrl())
-                .placeholder(R.color.colorAccent)
-                .into(holder.mUserAvatarImage);
+        if(holder instanceof TweetViewHolder) {
+            TweetViewHolder tweetHolder = (TweetViewHolder) holder;
+            TweetItem item = mTweetItems.get(position);
+
+            tweetHolder.mUserNameText.setText(item.getUser().getName());
+            tweetHolder.mTweetCreatedDateText.setText(item.getCreatedAt());
+            tweetHolder.mTweetDescriptionText.setText(item.getText());
+            tweetHolder.mUserFavouriteCountText.setText(item.getUser().getFollowersCount());
+            Picasso.with(mContext)
+                    .load(item.getUser().getProfileImageUrl())
+                    .placeholder(R.color.colorAccent)
+                    .into(tweetHolder.mUserAvatarImage);
+        }
     }
 
     @Override
@@ -72,8 +87,25 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAd
         return (mTweetItems == null) ? 0 : mTweetItems.size();
     }
 
-    public void addItems(RealmList<TweetItem> newItems) {
-        mTweetItems.addAll(newItems);
+    @Override
+    public int getItemViewType(int position) {
+        return mTweetItems.get(position).getUser() == null ? VIEW_LOADING_TYPE : VIEW_TWEET_TYPE;
+    }
+
+    public void addTweets(RealmList<TweetItem> newTweets) {
+        int insertedPosition = getItemCount();
+        mTweetItems.addAll(newTweets);
+        notifyItemRangeInserted(insertedPosition, newTweets.size());
+    }
+
+    public void addProgressItem(){
+        mTweetItems.add(mProgressItem);
+        notifyItemInserted(mTweetItems.size());
+    }
+
+    public void removeProgressItem(){
+        mTweetItems.remove(mProgressItem);
+        notifyItemRemoved(mTweetItems.size() + 1);
     }
 
     class TweetViewHolder extends ButterViewHolder {
@@ -91,6 +123,16 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAd
 
         public TweetViewHolder(View view) {
             super(view);
+        }
+    }
+
+    class LoadingViewHolder extends ButterViewHolder {
+
+        @BindView(R.id.progressBar)
+        ProgressBar mProgressBar;
+
+        public LoadingViewHolder(View itemView) {
+            super(itemView);
         }
     }
 }

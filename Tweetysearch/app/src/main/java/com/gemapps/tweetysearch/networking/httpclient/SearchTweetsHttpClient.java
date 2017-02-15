@@ -31,10 +31,15 @@ import org.greenrobot.eventbus.EventBus;
 public class SearchTweetsHttpClient extends BaseHttpClient {
 
     private static final String TAG = "SearchTweetsHttpClient";
+    private static final String MAX_ID_PARAM = "&max_id=%s";
 
     public void getTweets(String url){
         Log.d(TAG, "getTweets: URL: "+url);
         doGet(url);
+    }
+
+    public void getTweetsWithMaxId(String url, long maxId) {
+        doGet(url+String.format(MAX_ID_PARAM, maxId));
     }
 
     @Override
@@ -48,4 +53,5 @@ public class SearchTweetsHttpClient extends BaseHttpClient {
     protected void onFail() {
         Log.d(TAG, "onFail: ");
     }
+
 }
