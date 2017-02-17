@@ -61,7 +61,7 @@
                     android:layout_weight="1"
                     android:contentDescription="@string/search_by_popular_desc"
                     android:text="populars"
-                    android:drawableTop="@drawable/ic_loyalty_black_24px"/>
+                    android:drawableTop="@drawable/ic_star_black_24px"/>
 
                 <Button
                     android:id="@+id/location_search_button"

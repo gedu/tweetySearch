@@ -16,6 +16,8 @@
 
 package com.gemapps.tweetysearch.networking;
 
+import android.util.Log;
+
 import com.gemapps.tweetysearch.networking.httpclient.AuthenticationHttpClient;
 import com.gemapps.tweetysearch.networking.httpclient.SearchTweetsHttpClient;
 import com.gemapps.tweetysearch.networking.model.Bearer;
@@ -54,6 +56,7 @@ public class TwitterSearchManager {
     private TwitterSearchManager(){
         mRealm = Realm.getDefaultInstance();
         mBearer = mRealm.where(Bearer.class).findFirst();
+
     }
 
     public void authenticate(){
@@ -74,6 +77,7 @@ public class TwitterSearchManager {
     }
 
     public void loadNew(){
+        Log.d(TAG, "loadNew: SINCE: "+mTweetSinceId);
         if(mTweetSinceId != INVALID_SINCE_ID){
             new SearchTweetsHttpClient()
                     .getTweetsWithSinceId(TWITTER_BASE_URL + mCurrentSearch.getParameters(),
@@ -84,6 +88,7 @@ public class TwitterSearchManager {
     }
 
     public void loadMore(){
+        Log.d(TAG, "loadMore: MAX: "+mTweetMaxId);
         if(mTweetMaxId != INVALID_MAX_ID){
             new SearchTweetsHttpClient()
                     .getTweetsWithMaxId(TWITTER_BASE_URL + mCurrentSearch.getParameters(),

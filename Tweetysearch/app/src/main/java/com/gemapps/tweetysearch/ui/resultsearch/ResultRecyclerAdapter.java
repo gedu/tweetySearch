@@ -18,6 +18,8 @@ package com.gemapps.tweetysearch.ui.resultsearch;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,8 @@ import android.widget.TextView;
 import com.gemapps.tweetysearch.R;
 import com.gemapps.tweetysearch.ui.butter.ButterViewHolder;
 import com.gemapps.tweetysearch.ui.model.TweetItem;
+import com.gemapps.tweetysearch.ui.widget.LinkClickTransformation;
+import com.gemapps.tweetysearch.util.DateUtil;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -38,6 +42,7 @@ import io.realm.RealmList;
  */
 public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder> {
 
+    private static final String TAG = "ResultRecyclerAdapter";
     private static final int VIEW_LOADING_TYPE = 0;
     private static final int VIEW_TWEET_TYPE = 1;
     private Context mContext;
@@ -72,12 +77,14 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
             TweetItem item = mTweetItems.get(position);
 
             tweetHolder.mUserNameText.setText(item.getUser().getName());
-            tweetHolder.mTweetCreatedDateText.setText(item.getCreatedAt());
+            tweetHolder.mTweetCreatedDateText.setText(DateUtil.formatDayMonthFrom(item.getCreatedAt()));
             tweetHolder.mTweetDescriptionText.setText(item.getText());
+//            tweetHolder.mTweetDescriptionText
+//                    .setText(HtmlUtil.parseTextToHandleLink(tweetHolder.mTweetDescriptionText.getEditableText()));
             tweetHolder.mUserFavouriteCountText.setText(item.getUser().getFollowersCount());
             Picasso.with(mContext)
                     .load(item.getUser().getProfileImageUrl())
-                    .placeholder(R.color.colorAccent)
+                    .placeholder(R.drawable.ic_landscape_black_24px)
                     .into(tweetHolder.mUserAvatarImage);
         }
     }
@@ -94,12 +101,14 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
 
     public void addTweetsAtEnd(RealmList<TweetItem> newTweets) {
         int insertedPosition = getItemCount();
+        Log.d(TAG, "addTweetsAtEnd: insertedPos "+insertedPosition+" size: "+newTweets.size() );
         mTweetItems.addAll(newTweets);
         notifyItemRangeInserted(insertedPosition, newTweets.size());
     }
 
     public void addTweetsAtStart(RealmList<TweetItem> newTweets) {
         mTweetItems.addAll(0, newTweets);
+        Log.d(TAG, "addTweetsAtStart: SIZE: "+newTweets.size());
         notifyItemRangeInserted(0, newTweets.size());
     }
 
@@ -128,6 +137,9 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
 
         public TweetViewHolder(View view) {
             super(view);
+            mTweetDescriptionText.setTransformationMethod(new LinkClickTransformation());
+            mTweetDescriptionText.setMovementMethod(LinkMovementMethod.getInstance());
+//            Linkify.addLinks(mTweetDescriptionText, Linkify.WEB_URLS);
         }
     }
 

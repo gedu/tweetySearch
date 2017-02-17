@@ -16,8 +16,10 @@
 
 package com.gemapps.tweetysearch.ui.resultsearch;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.gemapps.tweetysearch.R;
 
@@ -32,6 +34,14 @@ public class ResultSearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_result_search);
         setupFragment(savedInstanceState);
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d(TAG, "onNewIntent: "+intent);
+    }
+
+
 
     private void setupFragment(Bundle savedInstanceState){
         if(savedInstanceState == null){

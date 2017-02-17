@@ -16,6 +16,8 @@
 
 package com.gemapps.tweetysearch.util;
 
+import android.util.Log;
+
 import com.gemapps.tweetysearch.networking.TwitterSearchManager;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
 import com.gemapps.tweetysearch.ui.model.TweetItem;
@@ -71,6 +73,7 @@ public class TweetsDeserializer implements JsonDeserializer<TweetCollection> {
 
             tweetsCollection.addTweet(tweetItem);
         }
+        Log.d(TAG, "populateTweetsWith: MAX ID: "+lowestId+" SINCE ID: "+higherId);
         TwitterSearchManager.getInstance().setTweetMaxId(lowestId - REMOVE_REDUNDANT_ID);
         TwitterSearchManager.getInstance().setTweetSinceId(higherId);
         return tweetsCollection;

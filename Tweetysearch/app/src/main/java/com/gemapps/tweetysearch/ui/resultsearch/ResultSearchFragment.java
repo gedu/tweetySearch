@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -51,6 +52,8 @@ public class ResultSearchFragment extends ButterFragment {
     private static final String TAG = "ResultSearchFragment";
     private static final int LOAD_WINDOW_COUNT = 3;
 
+    @BindView(R.id.result_loading_bar)
+    ContentLoadingProgressBar mLoadingBar;
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
     @BindView(R.id.result_recycler_view)
@@ -88,6 +91,7 @@ public class ResultSearchFragment extends ButterFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mLoadingBar.show();
         mResultView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mResultView.setAdapter(mAdapter);
         mResultView.addOnScrollListener(mScrollListener);
@@ -123,6 +127,7 @@ public class ResultSearchFragment extends ButterFragment {
             case NetworkResponseBridge.TWEETS_LOAD_NEW: handleLoadNewTweets(tweetCollection.getTweetItems());
                 break;
         }
+        mLoadingBar.hide();
     }
 
     private void addNewTweets(RealmList<TweetItem> tweets) {

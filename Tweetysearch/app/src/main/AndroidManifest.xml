@@ -28,7 +28,19 @@
             </intent-filter>
         </activity-alias>
 
-        <activity android:name=".ui.resultsearch.ResultSearchActivity">
+        <activity android:name=".ui.resultsearch.ResultSearchActivity"
+            android:launchMode="singleInstance">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data android:scheme="http"
+                      android:host="t.c"/>
+                <data android:scheme="https"
+                      android:host="t.c"/>
+
+            </intent-filter>
         </activity>
     </application>
 
