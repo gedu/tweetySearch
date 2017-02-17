@@ -16,11 +16,16 @@
 
 package com.gemapps.tweetysearch.ui.widget;
 
+import android.app.Activity;
 import android.graphics.Rect;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.text.Spannable;
 import android.text.method.TransformationMethod;
 import android.view.View;
 import android.widget.TextView;
+
+import java.lang.ref.WeakReference;
 
 import static com.gemapps.tweetysearch.util.HtmlUtil.parseTextToHandleLink;
 
@@ -28,14 +33,21 @@ import static com.gemapps.tweetysearch.util.HtmlUtil.parseTextToHandleLink;
  * Created by edu on 2/17/17.
  * Wrapper to handle the link clicking
  */
+@RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
 public class LinkClickTransformation implements TransformationMethod {
+
+    private WeakReference<Activity> mActivityWeak;
+
+    public LinkClickTransformation(Activity activity) {
+        mActivityWeak = new WeakReference<Activity>(activity);
+    }
 
     @Override
     public CharSequence getTransformation(CharSequence source, View view) {
         if(view instanceof TextView) {
             TextView textView = (TextView) view;
             if(textView.getText().length() > 0)
-                return parseTextToHandleLink((Spannable) textView.getText());
+                return parseTextToHandleLink(mActivityWeak.get(), (Spannable) textView.getText());
         }
         return source;
     }

@@ -16,10 +16,10 @@
 
 package com.gemapps.tweetysearch.util;
 
+import android.app.Activity;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.URLSpan;
-import android.util.Log;
 
 import com.gemapps.tweetysearch.ui.widget.UrlClickableSpan;
 
@@ -31,13 +31,13 @@ public class HtmlUtil {
 
     private static final String TAG = "HtmlUtil";
 
-    public static Spannable parseTextToHandleLink(Spannable text) {
+    public static Spannable parseTextToHandleLink(Activity activity, Spannable text) {
         URLSpan[] urlSpans = text.getSpans(0, text.length(), URLSpan.class);
         for (URLSpan urlSpan : urlSpans) {
             int start = text.getSpanStart(urlSpan);
             int end = start + urlSpan.getURL().length();
             text.removeSpan(urlSpan);
-            text.setSpan(new UrlClickableSpan(urlSpan.getURL()),
+            text.setSpan(new UrlClickableSpan(activity, urlSpan.getURL()),
                     start, end, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         }
         return text;

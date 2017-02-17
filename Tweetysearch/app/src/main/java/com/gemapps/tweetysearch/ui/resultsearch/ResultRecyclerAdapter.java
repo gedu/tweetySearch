@@ -16,7 +16,9 @@
 
 package com.gemapps.tweetysearch.ui.resultsearch;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -79,8 +81,6 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
             tweetHolder.mUserNameText.setText(item.getUser().getName());
             tweetHolder.mTweetCreatedDateText.setText(DateUtil.formatDayMonthFrom(item.getCreatedAt()));
             tweetHolder.mTweetDescriptionText.setText(item.getText());
-//            tweetHolder.mTweetDescriptionText
-//                    .setText(HtmlUtil.parseTextToHandleLink(tweetHolder.mTweetDescriptionText.getEditableText()));
             tweetHolder.mUserFavouriteCountText.setText(item.getUser().getFollowersCount());
             Picasso.with(mContext)
                     .load(item.getUser().getProfileImageUrl())
@@ -137,7 +137,9 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
 
         public TweetViewHolder(View view) {
             super(view);
-            mTweetDescriptionText.setTransformationMethod(new LinkClickTransformation());
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                mTweetDescriptionText.setTransformationMethod(new LinkClickTransformation((Activity) mContext));
+            }
             mTweetDescriptionText.setMovementMethod(LinkMovementMethod.getInstance());
 //            Linkify.addLinks(mTweetDescriptionText, Linkify.WEB_URLS);
         }

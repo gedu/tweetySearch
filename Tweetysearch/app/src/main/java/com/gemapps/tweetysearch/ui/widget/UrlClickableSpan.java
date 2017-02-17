@@ -16,11 +16,16 @@
 
 package com.gemapps.tweetysearch.ui.widget;
 
+import android.app.Activity;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.View;
+
+import com.gemapps.tweetysearch.util.ChromeTabActivityUtil;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Created by edu on 2/17/17.
@@ -29,11 +34,13 @@ import android.view.View;
 public class UrlClickableSpan extends URLSpan {
 
     private static final String TAG = "UrlClickableSpan";
+    private WeakReference<Activity> mCurrentActivityWeak;
     private String mUrl;
 
-    public UrlClickableSpan(String url) {
+    public UrlClickableSpan(Activity activity, String url) {
         super(url);
         mUrl = url;
+        mCurrentActivityWeak = new WeakReference<Activity>(activity);
     }
 
     public UrlClickableSpan(Parcel in) {
@@ -55,6 +62,8 @@ public class UrlClickableSpan extends URLSpan {
     @Override
     public void onClick(View widget) {
         Log.d(TAG, "onClick: URL: " + mUrl);
+        if(mCurrentActivityWeak.get() != null)
+            ChromeTabActivityUtil.openCustomTab(mCurrentActivityWeak.get(), mUrl);
     }
 
     public static final Parcelable.Creator<UrlClickableSpan> CREATOR =
