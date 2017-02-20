@@ -16,6 +16,9 @@
 
 package com.gemapps.tweetysearch.ui.model;
 
+import com.google.gson.annotations.SerializedName;
+
+import io.realm.RealmList;
 import io.realm.RealmObject;
 
 /**
@@ -24,15 +27,20 @@ import io.realm.RealmObject;
 
 public class Entity extends RealmObject {
 
-    public MediaEntity mMediaEntity;
+    @SerializedName("media")
+    public RealmList<MediaEntity> mMediaEntity;
 
     public Entity() {}
 
-    public MediaEntity getMediaEntity() {
+    public boolean hasMedia(){
+        return mMediaEntity != null && mMediaEntity.size() > 0;
+    }
+    public RealmList<MediaEntity> getMediaEntity() {
         return mMediaEntity;
     }
 
-    public void setMediaEntity(MediaEntity mediaEntity) {
+
+    public void setMediaEntity(RealmList<MediaEntity> mediaEntity) {
         mMediaEntity = mediaEntity;
     }
 }

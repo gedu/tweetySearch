@@ -82,11 +82,20 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
             tweetHolder.mTweetCreatedDateText.setText(DateUtil.formatDayMonthFrom(item.getCreatedAt()));
             tweetHolder.mTweetDescriptionText.setText(item.getText());
             tweetHolder.mUserFavouriteCountText.setText(item.getUser().getFollowersCount());
-            Picasso.with(mContext)
-                    .load(item.getUser().getProfileImageUrl())
-                    .placeholder(R.drawable.ic_landscape_black_24px)
-                    .into(tweetHolder.mUserAvatarImage);
+            loadImageInto(tweetHolder.mUserAvatarImage, item.getUser().getProfileImageUrl());
+            if(item.getEntity() != null && item.getEntity().hasMedia()) {
+                tweetHolder.mTweetImages.setVisibility(View.VISIBLE);
+                loadImageInto(tweetHolder.mTweetImages,
+                        item.getEntity().getMediaEntity().get(0).getMediaUrl());
+            }
         }
+    }
+
+    private void loadImageInto(ImageView target, String imageUrl){
+        Picasso.with(mContext)
+                .load(imageUrl)
+                .placeholder(R.drawable.ic_landscape_black_24px)
+                .into(target);
     }
 
     @Override
@@ -134,6 +143,8 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
         TextView mTweetCreatedDateText;
         @BindView(R.id.user_favourite_count_text)
         TextView mUserFavouriteCountText;
+        @BindView(R.id.tweet_picture_image)
+        ImageView mTweetImages;
 
         public TweetViewHolder(View view) {
             super(view);
