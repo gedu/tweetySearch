@@ -33,6 +33,8 @@ public class ChromeTabActivityUtil {
 
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         builder.setToolbarColor(ContextCompat.getColor(activity, R.color.colorPrimary));
+        builder.setStartAnimations(activity, R.anim.slide_in_rigth, R.anim.slide_out_left);
+        builder.setExitAnimations(activity, R.anim.slide_in_left, R.anim.slide_out_right);
         CustomTabsIntent tabsIntent = builder.build();
         tabsIntent.launchUrl(activity, Uri.parse(url));
     }
