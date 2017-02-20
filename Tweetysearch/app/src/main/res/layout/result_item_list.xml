@@ -90,6 +90,13 @@
                 android:padding="8dp"
                 tools:text="99"/>
 
+            <com.gemapps.tweetysearch.ui.widget.FitInImageView
+                android:id="@+id/tweet_picture_image"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:visibility="gone"/>
+
+
         </LinearLayout>
 
     </LinearLayout>

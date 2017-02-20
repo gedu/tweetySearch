@@ -51,7 +51,7 @@ public class SearchTweetsHttpClient extends BaseHttpClient {
 
     @Override
     protected void onSuccess(String body, int tag) {
-        Log.d(TAG, "onSuccess() called with: tag = <" + tag + ">");
+        Log.d(TAG, "onSuccess() called with: tag = <" + body + ">");
         TweetCollection collection = GsonUtil.TWEETS_GSON.fromJson(body, TweetCollection.class);
         NetworkResponseBridge response = new NetworkResponseBridge<>(tag, collection);
         EventBus.getDefault().post(response);

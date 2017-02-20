@@ -36,6 +36,8 @@ public class TweetItem extends RealmObject {
     private String mCreatedAt;
     @SerializedName("user")
     private User mUser;
+    @SerializedName("entities")
+    private Entity mEntity;
 
     public TweetItem() {}
 
@@ -77,5 +79,13 @@ public class TweetItem extends RealmObject {
 
     public void setUser(User user) {
         mUser = user;
+    }
+
+    public Entity getEntity() {
+        return mEntity;
+    }
+
+    public void setEntity(Entity entity) {
+        mEntity = entity;
     }
 }
