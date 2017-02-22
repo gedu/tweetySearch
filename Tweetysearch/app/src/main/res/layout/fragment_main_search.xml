@@ -31,8 +31,8 @@
                     app:queryHint="@string/search_query_hint_msg"/>
 
                 <Button
-                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
                     android:id="@+id/query_search_button"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/search_text"/>
@@ -43,25 +43,27 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <Button
+                <com.gemapps.tweetysearch.ui.widget.ResultTypeButtonSelectable
                     android:id="@+id/recent_search_button"
                     style="@style/BorderlessButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:contentDescription="@string/search_by_recent_desc"
-                    android:text="recents"
-                    android:drawableTop="@drawable/ic_fiber_new_black_24px"/>
+                    android:drawableTop="@drawable/recent_selector_bg"
+                    android:text="@string/recent_text"
+                    app:search_type="recent"/>
 
-                <Button
+                <com.gemapps.tweetysearch.ui.widget.ResultTypeButtonSelectable
                     android:id="@+id/popular_search_button"
                     style="@style/BorderlessButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:contentDescription="@string/search_by_popular_desc"
-                    android:text="populars"
-                    android:drawableTop="@drawable/ic_star_black_24px"/>
+                    android:drawableTop="@drawable/popular_selector_bg"
+                    android:text="@string/popular_text"
+                    app:search_type="popular"/>
 
                 <Button
                     android:id="@+id/location_search_button"
@@ -70,8 +72,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:contentDescription="@string/search_by_location_desc"
-                    android:text="location"
-                    android:drawableTop="@drawable/ic_location_on_black_24px"/>
+                    android:drawableTop="@drawable/ic_location_on_black_24px"
+                    android:text="location"/>
 
             </LinearLayout>
 
@@ -83,8 +85,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/recently_searched_title_txt"
-        android:layout_margin="@dimen/activity_horizontal_margin"/>
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:text="@string/recently_searched_title_txt"/>
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"

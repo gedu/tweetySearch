@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.gemapps.tweetysearch.R;
 import com.gemapps.tweetysearch.ui.butter.ButterViewHolder;
+import com.gemapps.tweetysearch.ui.model.MediaEntity;
 import com.gemapps.tweetysearch.ui.model.TweetItem;
 import com.gemapps.tweetysearch.ui.widget.LinkClickTransformation;
 import com.gemapps.tweetysearch.util.DateUtil;
@@ -87,6 +88,14 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
                 tweetHolder.mTweetImages.setVisibility(View.VISIBLE);
                 loadImageInto(tweetHolder.mTweetImages,
                         item.getEntity().getMediaEntity().get(0).getMediaUrl());
+
+
+                if(item.getEntity().getMediaEntity().size() > 2){
+                    for (MediaEntity me :
+                            item.getEntity().getMediaEntity()) {
+                        Log.d(TAG, "onBindViewHolder: MEDIA URL: "+me.getMediaUrl());
+                    }
+                }
             }
         }
     }

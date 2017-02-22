@@ -10,4 +10,6 @@
     <string name="recently_searched_title_txt">Recently searched</string>
     <string name="search_text">Search</string>
     <string name="avatar_image_desc">User avatar</string>
+    <string name="recent_text">Recent</string>
+    <string name="popular_text">Popular</string>
 </resources>

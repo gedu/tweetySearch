@@ -15,9 +15,8 @@
   ~    limitations under the License.
   -->
 
-<resources>
-    <integer name="chrome_anim_duration">300</integer>
-    <integer name="search_type_recent">1</integer>
-    <integer name="search_type_popular">2</integer>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-</resources>
+    <item android:state_selected="true" android:drawable="@drawable/ic_star_accent_24px"/>
+    <item android:drawable="@drawable/ic_star_black_24px"/>
+</selector>

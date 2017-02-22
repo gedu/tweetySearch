@@ -16,8 +16,10 @@
   -->
 
 <resources>
-    <integer name="chrome_anim_duration">300</integer>
-    <integer name="search_type_recent">1</integer>
-    <integer name="search_type_popular">2</integer>
-
+    <declare-styleable name="ResultTypeButtonSelectable">
+        <attr name="search_type">
+            <flag name="recent" value="1"/>
+            <flag name="popular" value="2"/>
+        </attr>
+    </declare-styleable>
 </resources>

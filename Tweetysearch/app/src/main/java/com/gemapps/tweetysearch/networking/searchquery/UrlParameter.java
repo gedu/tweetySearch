@@ -16,6 +16,8 @@
 
 package com.gemapps.tweetysearch.networking.searchquery;
 
+import com.gemapps.tweetysearch.networking.searchquery.paramquery.ResultType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +47,10 @@ public final class UrlParameter {
             stringBuilder.append(URL_AND);
         }
         stringBuilder.deleteCharAt(stringBuilder.length() -1);
+        if(builder.mResultType != null) {
+            stringBuilder.append(URL_AND);
+            stringBuilder.append(builder.mResultType.getParameterQuery());
+        }
         mParams = stringBuilder.toString();
     }
 
@@ -72,7 +78,9 @@ public final class UrlParameter {
     public static class Builder {
 
         List<Parameterizable> queries = new ArrayList<>();
+        private ResultType mResultType;
 
+        //// TODO: 2/20/17 UPDATE THIS, use just one for each
         public void addParameter(Parameterizable parameter){
             removeParameter(parameter);
             queries.add(parameter);
@@ -80,6 +88,12 @@ public final class UrlParameter {
 
         public void removeParameter(Parameterizable parameter){
             if(queries.contains(parameter)) queries.remove(parameter);
+        }
+
+        public Builder setResultType(Integer type){
+            if(mResultType == null) mResultType = new ResultType();
+            mResultType.updateType(type);
+            return this;
         }
 
         public List<Parameterizable> getQueries(){

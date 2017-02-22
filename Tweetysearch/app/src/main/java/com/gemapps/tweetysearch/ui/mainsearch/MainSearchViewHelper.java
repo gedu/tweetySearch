@@ -21,6 +21,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.gemapps.tweetysearch.R;
+import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
+import com.gemapps.tweetysearch.ui.widget.ResultTypeButtonSelectable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,6 +38,10 @@ public class MainSearchViewHelper {
         void onSearchClicked();
     }
 
+    @BindView(R.id.recent_search_button)
+    ResultTypeButtonSelectable mRecentSearchButton;
+    @BindView(R.id.popular_search_button)
+    ResultTypeButtonSelectable mPopularSearchButton;
     @BindView(R.id.word_search_view)
     SearchView mSearchView;
 
@@ -54,6 +60,11 @@ public class MainSearchViewHelper {
 
     public void addSearchClickListener(SearchClickListener listener){
         mSearchClickListener = listener;
+    }
+
+    public void setResultTypeBuilderToButtons(UrlParameter.Builder builder){
+        mRecentSearchButton.setResultTypeBuilder(builder);
+        mPopularSearchButton.setResultTypeBuilder(builder);
     }
 
     public String getTextToSearch(){

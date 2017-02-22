@@ -86,13 +86,18 @@ public class MainSearchFragment extends ButterFragment {
                              Bundle savedInstanceState) {
         View rootView = createView(inflater, container, R.layout.fragment_main_search);
         mViewHelper = new MainSearchViewHelper(rootView);
+        setupViewHelper();
+        return rootView;
+    }
+
+    private void setupViewHelper(){
         mViewHelper.addSearchClickListener(new MainSearchViewHelper.SearchClickListener() {
             @Override
             public void onSearchClicked() {
                 onSearchPressed();
             }
         });
-        return rootView;
+        mViewHelper.setResultTypeBuilderToButtons(mParameterBuilder);
     }
 
     @OnClick(R.id.query_search_button)

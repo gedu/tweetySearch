@@ -60,9 +60,6 @@ public class TweetsDeserializer implements JsonDeserializer<TweetCollection> {
         long higherId = Long.MIN_VALUE;
         //// TODO: 2/15/17 CHECK IF ALWAYS THE LAST ITEM IS THE LOWEST AND THE FIRST IS THE HIGHEST
         for (JsonElement element : statuses) {
-            Log.d(TAG, "populateTweetsWith: ELEMENT: "+element);
-            Log.d(TAG, "populateTweetsWith: ENTITIES: "+element.getAsJsonObject().get("entities"));
-            Log.d(TAG, "-------");
             TweetItem tweetItem = new Gson().fromJson(element, TweetItem.class);
 
             long id = tweetItem.getId();
