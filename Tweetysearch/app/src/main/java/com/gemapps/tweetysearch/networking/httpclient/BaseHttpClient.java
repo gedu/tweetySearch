@@ -18,6 +18,7 @@ package com.gemapps.tweetysearch.networking.httpclient;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.gemapps.tweetysearch.networking.TwitterSearchManager;
 import com.squareup.okhttp.Callback;
@@ -88,6 +89,7 @@ public abstract class BaseHttpClient {
                         }
                     });
                 }else{
+                    Log.e(TAG, "onResponse: CODE: "+response.code());
                     onFail();
                 }
             }

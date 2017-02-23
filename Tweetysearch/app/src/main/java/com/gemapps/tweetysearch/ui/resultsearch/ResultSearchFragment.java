@@ -20,14 +20,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
+import android.widget.ProgressBar;
 
 import com.gemapps.tweetysearch.R;
 import com.gemapps.tweetysearch.networking.TwitterSearchManager;
@@ -35,11 +37,13 @@ import com.gemapps.tweetysearch.networking.model.NetworkResponseBridge;
 import com.gemapps.tweetysearch.ui.butter.ButterFragment;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
 import com.gemapps.tweetysearch.ui.model.TweetItem;
+import com.gemapps.tweetysearch.ui.widget.NoConnectionHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import butterknife.BindInt;
 import butterknife.BindView;
 import io.realm.RealmList;
 
@@ -53,14 +57,20 @@ public class ResultSearchFragment extends ButterFragment {
     private static final int LOAD_WINDOW_COUNT = 3;
 
     @BindView(R.id.result_loading_bar)
-    ContentLoadingProgressBar mLoadingBar;
+    ProgressBar mLoadingBar;
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
+    @BindView(R.id.no_connection_stub)
+    ViewStub mNoConnectionStub;
     @BindView(R.id.result_recycler_view)
     RecyclerView mResultView;
 
+    @BindInt(R.integer.result_grid_span_count)
+    int mSpanCount;
+
     private ResultRecyclerAdapter mAdapter;
     private boolean mIsLoadingMore = false;
+    private NoConnectionHelper mNoConnectionHelper;
     private Handler mHandler = new Handler(Looper.getMainLooper());
 
     public ResultSearchFragment() {
@@ -91,8 +101,7 @@ public class ResultSearchFragment extends ButterFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mLoadingBar.show();
-        mResultView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mResultView.setLayoutManager(new StaggeredGridLayoutManager(mSpanCount, LinearLayoutManager.VERTICAL));
         mResultView.setAdapter(mAdapter);
         mResultView.addOnScrollListener(mScrollListener);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -126,11 +135,25 @@ public class ResultSearchFragment extends ButterFragment {
                 break;
             case NetworkResponseBridge.TWEETS_LOAD_NEW: handleLoadNewTweets(tweetCollection.getTweetItems());
                 break;
+            case NetworkResponseBridge.TWEETS_LOAD_ERROR: showErrorMessage();
         }
-        mLoadingBar.hide();
+        mLoadingBar.setVisibility(View.GONE);
+    }
+
+    private void showErrorMessage() {
+        mLoadingBar.setVisibility(View.GONE);
+        if(mNoConnectionHelper == null)
+            mNoConnectionHelper = new NoConnectionHelper(mNoConnectionStub.inflate(), mTryAgainListener);
+        mNoConnectionHelper.showView();
+    }
+
+    private void hideErrorMessage() {
+        if(mNoConnectionHelper != null)
+            mNoConnectionHelper.hideView();
     }
 
     private void addNewTweets(RealmList<TweetItem> tweets) {
+        hideErrorMessage();
         mAdapter.addTweetsAtEnd(tweets);
     }
 
@@ -141,6 +164,7 @@ public class ResultSearchFragment extends ButterFragment {
     }
 
     private void handleLoadNewTweets(RealmList<TweetItem> tweets){
+        hideErrorMessage();
         mRefreshLayout.setRefreshing(false);
         mAdapter.addTweetsAtStart(tweets);
         mResultView.smoothScrollToPosition(0);
@@ -175,6 +199,14 @@ public class ResultSearchFragment extends ButterFragment {
             mIsLoadingMore = true;
             mAdapter.addProgressItem();
             TwitterSearchManager.getInstance().loadMore();
+        }
+    };
+
+    private NoConnectionHelper.TryAgainListener mTryAgainListener = new NoConnectionHelper.TryAgainListener() {
+        @Override
+        public void onTry() {
+            mLoadingBar.setVisibility(View.VISIBLE);
+            TwitterSearchManager.getInstance().reTryLastSearch();
         }
     };
 

@@ -35,8 +35,8 @@ public class SearchTweetsHttpClient extends BaseHttpClient {
     private static final String SINCE_ID_PARAM = "&since_id=%s";
 
     public void getTweets(String url){
-        Log.d(TAG, "getTweets() called with: url = <" + url + ">");
-        doGet(url, NetworkResponseBridge.TWEETS_SEARCH);
+        Log.d(TAG, "getTweets() called with: url = <" + url+"&geocode=-22.912214,-43.230182,1km" + ">");
+        doGet(url+"&geocode=-22.912214,-43.230182,1km", NetworkResponseBridge.TWEETS_SEARCH);
     }
 
     public void getTweetsWithMaxId(String url, long maxId) {
@@ -60,6 +60,8 @@ public class SearchTweetsHttpClient extends BaseHttpClient {
     @Override
     protected void onFail() {
         Log.d(TAG, "onFail: ");
+        EventBus.getDefault()
+                .post(new NetworkResponseBridge<>(NetworkResponseBridge.TWEETS_LOAD_ERROR, null));
     }
 
 }

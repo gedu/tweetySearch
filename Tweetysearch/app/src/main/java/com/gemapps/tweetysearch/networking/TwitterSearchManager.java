@@ -70,6 +70,10 @@ public class TwitterSearchManager {
         return mBearer != null;
     }
 
+    public void reTryLastSearch(){
+        search(mCurrentSearch);
+    }
+
     public void search(UrlParameter urlParameter){
         mCurrentSearch = urlParameter;
         new SearchTweetsHttpClient()

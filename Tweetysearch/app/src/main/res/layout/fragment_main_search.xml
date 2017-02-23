@@ -65,15 +65,15 @@
                     android:text="@string/popular_text"
                     app:search_type="popular"/>
 
-                <Button
-                    android:id="@+id/location_search_button"
-                    style="@style/BorderlessButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/search_by_location_desc"
-                    android:drawableTop="@drawable/ic_location_on_black_24px"
-                    android:text="location"/>
+                <!--<Button-->
+                    <!--android:id="@+id/location_search_button"-->
+                    <!--style="@style/BorderlessButton"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:contentDescription="@string/search_by_location_desc"-->
+                    <!--android:drawableTop="@drawable/ic_location_on_black_24px"-->
+                    <!--android:text="location"/>-->
 
             </LinearLayout>
 

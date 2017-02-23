@@ -17,6 +17,7 @@
 package com.gemapps.tweetysearch.networking.model;
 
 import android.support.annotation.IntDef;
+import android.support.annotation.Nullable;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -27,17 +28,18 @@ import java.lang.annotation.RetentionPolicy;
 
 public class NetworkResponseBridge<T> {
 
-    @IntDef(flag=true, value={TWEETS_SEARCH})
+    @IntDef(flag=true, value={TWEETS_SEARCH, TWEETS_LOAD_MORE, TWEETS_LOAD_NEW})
     @Retention(RetentionPolicy.SOURCE)
     public @interface NetworkResponseType{}
     public static final int TWEETS_SEARCH = 0;
     public static final int TWEETS_LOAD_MORE = 1;
-    public static final int TWEETS_LOAD_NEW = 2;
+    public static final int TWEETS_LOAD_NEW = 1 << 1;
+    public static final int TWEETS_LOAD_ERROR = 1 << 2;
 
     private @NetworkResponseType int mType;
     private T mContent;
 
-    public NetworkResponseBridge(int type, T content) {
+    public NetworkResponseBridge(int type, @Nullable T content) {
         mType = type;
         mContent = content;
     }

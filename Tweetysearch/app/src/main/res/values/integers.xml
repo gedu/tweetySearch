@@ -19,5 +19,6 @@
     <integer name="chrome_anim_duration">300</integer>
     <integer name="search_type_recent">1</integer>
     <integer name="search_type_popular">2</integer>
+    <integer name="result_grid_span_count">1</integer>
 
 </resources>

@@ -12,4 +12,7 @@
     <string name="avatar_image_desc">User avatar</string>
     <string name="recent_text">Recent</string>
     <string name="popular_text">Popular</string>
+    <string name="try_again">Try again</string>
+    <string name="noconnection_text_error">Can\'t load search results</string>
+    <string name="no_connection_pic">No connection</string>
 </resources>
