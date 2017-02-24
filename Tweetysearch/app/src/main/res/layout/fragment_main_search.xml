@@ -39,6 +39,10 @@
                     android:text="@string/search_text"/>
             </LinearLayout>
 
+            <com.gemapps.tweetysearch.ui.widget.MultiChipsEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
