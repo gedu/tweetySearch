@@ -19,16 +19,20 @@ package com.gemapps.tweetysearch.ui.mainsearch;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.gemapps.tweetysearch.R;
+import com.gemapps.tweetysearch.networking.searchquery.RecentlySearchedItem;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 import com.gemapps.tweetysearch.networking.searchquery.paramquery.Query;
 import com.gemapps.tweetysearch.ui.butter.ButterFragment;
 
 import butterknife.OnClick;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,9 +42,11 @@ import butterknife.OnClick;
  * Use the {@link MainSearchFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainSearchFragment extends ButterFragment {
+public class MainSearchFragment extends ButterFragment
+        implements RecentlySearchedAdapter.RecentlySearchedListener {
 
     private static final String TAG = "MainSearchFragment";
+
     public interface OnSearchListener {
 
         void onSearch(UrlParameter urlParameter);
@@ -49,6 +55,9 @@ public class MainSearchFragment extends ButterFragment {
     private OnSearchListener mListener;
     private MainSearchViewHelper mViewHelper;
     private UrlParameter.Builder mParameterBuilder;
+    private RecentlySearchedAdapter mSearchedAdapter;
+    private Realm mRealm;
+    private RealmResults<RecentlySearchedItem> mSearchedItems;
     private Query mQuery;
 
     public MainSearchFragment() {
@@ -63,6 +72,13 @@ public class MainSearchFragment extends ButterFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupQueryBuilder();
+        setupAdapterForSearched();
+    }
+
+    private void setupAdapterForSearched(){
+        mRealm = Realm.getDefaultInstance();
+        mSearchedItems = mRealm.where(RecentlySearchedItem.class).findAllAsync();
+        mSearchedAdapter = new RecentlySearchedAdapter(getContext(), mSearchedItems, this);
     }
 
     private void setupQueryBuilder(){
@@ -86,6 +102,7 @@ public class MainSearchFragment extends ButterFragment {
                              Bundle savedInstanceState) {
         View rootView = createView(inflater, container, R.layout.fragment_main_search);
         mViewHelper = new MainSearchViewHelper(rootView);
+        mViewHelper.setRecentlySearchAdapter(mSearchedAdapter);
         setupViewHelper();
         return rootView;
     }
@@ -114,8 +131,30 @@ public class MainSearchFragment extends ButterFragment {
     }
 
     @Override
+    public void onClicked(int position) {
+        Log.d(TAG, "onClicked: "+mSearchedItems.get(position).getUrlParams());
+    }
+
+    @Override
+    public void onDeleted(final int position) {
+        Log.d(TAG, "onDeleted: "+mSearchedItems.get(position).getUrlParams());
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RecentlySearchedItem searchedItem = realm.where(RecentlySearchedItem.class)
+                        .equalTo(RecentlySearchedItem.COLUMN_URL_PARAM,
+                                mSearchedItems.get(position).getUrlParams())
+                        .findFirst();
+                //todo should delete results
+                searchedItem.deleteFromRealm();
+            }
+        });
+    }
+
+    @Override
     public void onDetach() {
-        super.onDetach();
         mListener = null;
+        mRealm.close();
+        super.onDetach();
     }
 }

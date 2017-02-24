@@ -24,6 +24,8 @@ import com.gemapps.tweetysearch.util.GsonUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
+import static com.gemapps.tweetysearch.networking.model.NetworkResponseBridge.TWEETS_EMPTY_SEARCH;
+
 /**
  * Created by edu on 2/13/17.
  */
@@ -53,7 +55,8 @@ public class SearchTweetsHttpClient extends BaseHttpClient {
     protected void onSuccess(String body, int tag) {
         Log.d(TAG, "onSuccess() called with: tag = <" + body + ">");
         TweetCollection collection = GsonUtil.TWEETS_GSON.fromJson(body, TweetCollection.class);
-        NetworkResponseBridge response = new NetworkResponseBridge<>(tag, collection);
+        int responseType = collection.getTweetItems().size() > 0 ? tag : TWEETS_EMPTY_SEARCH;
+        NetworkResponseBridge response = new NetworkResponseBridge<>(responseType, collection);
         EventBus.getDefault().post(response);
     }
 

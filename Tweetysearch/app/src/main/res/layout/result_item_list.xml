@@ -39,8 +39,8 @@
                 android:id="@+id/user_avatar_image"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginRight="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
                 android:contentDescription="@string/avatar_image_desc"
                 tools:src="@drawable/ic_landscape_black_24px"/>
 
@@ -85,7 +85,9 @@
             android:id="@+id/tweet_picture_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"/>
+            android:adjustViewBounds="true"
+            android:visibility="gone"
+            tools:ignore="ContentDescription"/>
 
         <TextView
             android:id="@+id/user_favourite_count_text"

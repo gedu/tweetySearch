@@ -24,7 +24,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +46,9 @@ import butterknife.BindInt;
 import butterknife.BindView;
 import io.realm.RealmList;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 /**
  * Use the {@link ResultSearchFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -62,6 +64,8 @@ public class ResultSearchFragment extends ButterFragment {
     SwipeRefreshLayout mRefreshLayout;
     @BindView(R.id.no_connection_stub)
     ViewStub mNoConnectionStub;
+    @BindView(R.id.empty_list_stub)
+    ViewStub mEmptyListStub;
     @BindView(R.id.result_recycler_view)
     RecyclerView mResultView;
 
@@ -101,13 +105,13 @@ public class ResultSearchFragment extends ButterFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mResultView.setLayoutManager(new StaggeredGridLayoutManager(mSpanCount, LinearLayoutManager.VERTICAL));
+        mResultView.setLayoutManager(new StaggeredGridLayoutManager(mSpanCount,
+                LinearLayoutManager.VERTICAL));
         mResultView.setAdapter(mAdapter);
         mResultView.addOnScrollListener(mScrollListener);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.d(TAG, "onRefresh");
                 TwitterSearchManager.getInstance().loadNew();
             }
         });
@@ -136,15 +140,10 @@ public class ResultSearchFragment extends ButterFragment {
             case NetworkResponseBridge.TWEETS_LOAD_NEW: handleLoadNewTweets(tweetCollection.getTweetItems());
                 break;
             case NetworkResponseBridge.TWEETS_LOAD_ERROR: showErrorMessage();
+                break;
+            case NetworkResponseBridge.TWEETS_EMPTY_SEARCH: showEmptyView();
         }
-        mLoadingBar.setVisibility(View.GONE);
-    }
-
-    private void showErrorMessage() {
-        mLoadingBar.setVisibility(View.GONE);
-        if(mNoConnectionHelper == null)
-            mNoConnectionHelper = new NoConnectionHelper(mNoConnectionStub.inflate(), mTryAgainListener);
-        mNoConnectionHelper.showView();
+        mLoadingBar.setVisibility(GONE);
     }
 
     private void hideErrorMessage() {
@@ -168,6 +167,20 @@ public class ResultSearchFragment extends ButterFragment {
         mRefreshLayout.setRefreshing(false);
         mAdapter.addTweetsAtStart(tweets);
         mResultView.smoothScrollToPosition(0);
+    }
+
+    private void showErrorMessage() {
+        mLoadingBar.setVisibility(GONE);
+        if(mNoConnectionHelper == null)
+            mNoConnectionHelper = new NoConnectionHelper(mNoConnectionStub.inflate(), mTryAgainListener);
+        mNoConnectionHelper.showView();
+    }
+
+    private void showEmptyView() {
+        mLoadingBar.setVisibility(GONE);
+        hideErrorMessage();
+        mEmptyListStub.setVisibility(VISIBLE);
+        mRefreshLayout.setVisibility(GONE);
     }
 
     private final RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
@@ -205,7 +218,7 @@ public class ResultSearchFragment extends ButterFragment {
     private NoConnectionHelper.TryAgainListener mTryAgainListener = new NoConnectionHelper.TryAgainListener() {
         @Override
         public void onTry() {
-            mLoadingBar.setVisibility(View.VISIBLE);
+            mLoadingBar.setVisibility(VISIBLE);
             TwitterSearchManager.getInstance().reTryLastSearch();
         }
     };

@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     tools:context="com.gemapps.tweetysearch.ui.mainsearch.MainSearchActivity">
 
-   <include layout="@layout/toolbar"/>
+   <!--<include layout="@layout/toolbar"/>-->
 
     <FrameLayout
         android:id="@+id/main_fragment_container"

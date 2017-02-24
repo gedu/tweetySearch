@@ -158,7 +158,8 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
         public TweetViewHolder(View view) {
             super(view);
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                mTweetDescriptionText.setTransformationMethod(new LinkClickTransformation((Activity) mContext));
+                mTweetDescriptionText
+                        .setTransformationMethod(new LinkClickTransformation((Activity) mContext));
             }
             mTweetDescriptionText.setMovementMethod(LinkMovementMethod.getInstance());
 //            Linkify.addLinks(mTweetDescriptionText, Linkify.WEB_URLS);

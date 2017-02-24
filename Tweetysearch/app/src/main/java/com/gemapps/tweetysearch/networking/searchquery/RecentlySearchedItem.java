@@ -25,6 +25,8 @@ import io.realm.annotations.PrimaryKey;
 
 public class RecentlySearchedItem extends RealmObject {
 
+    public static final String COLUMN_URL_PARAM = "mUrlParams";
+
     @PrimaryKey
     private String mUrlParams;
 

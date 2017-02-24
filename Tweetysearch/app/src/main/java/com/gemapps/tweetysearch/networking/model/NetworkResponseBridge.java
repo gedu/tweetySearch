@@ -28,13 +28,15 @@ import java.lang.annotation.RetentionPolicy;
 
 public class NetworkResponseBridge<T> {
 
-    @IntDef(flag=true, value={TWEETS_SEARCH, TWEETS_LOAD_MORE, TWEETS_LOAD_NEW})
+    @IntDef(flag=true, value={TWEETS_SEARCH, TWEETS_LOAD_MORE,
+            TWEETS_LOAD_NEW, TWEETS_LOAD_ERROR, TWEETS_EMPTY_SEARCH})
     @Retention(RetentionPolicy.SOURCE)
     public @interface NetworkResponseType{}
     public static final int TWEETS_SEARCH = 0;
     public static final int TWEETS_LOAD_MORE = 1;
     public static final int TWEETS_LOAD_NEW = 1 << 1;
     public static final int TWEETS_LOAD_ERROR = 1 << 2;
+    public static final int TWEETS_EMPTY_SEARCH = 1 << 3;
 
     private @NetworkResponseType int mType;
     private T mContent;

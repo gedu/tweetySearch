@@ -3,12 +3,17 @@
     <color name="colorPrimary">#F8D515</color>
     <color name="colorPrimaryDark">#FBC02D</color>
     <color name="colorAccent">#FB5607</color>
+    <color name="accent_icon">@color/accent_54</color>
+    <color name="accent_icon_text">@color/accent_54</color>
+    <color name="accent_54">#8afb5607</color>
 
     <color name="green_accent_light">#69F0AE</color>
 
     <color name="grey_light">#d6d6d6</color>
     <color name="disable_dark">#43000000</color>
-    <color name="secondary_text_dark">#8a000000</color>
+    <color name="dark_icon">@color/black_54</color>
+    <color name="secondary_text_dark">@color/black_54</color>
+    <color name="black_54">#8a000000</color>
 
 
 </resources>

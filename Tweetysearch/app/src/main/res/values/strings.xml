@@ -15,4 +15,6 @@
     <string name="try_again">Try again</string>
     <string name="noconnection_text_error">Can\'t load search results</string>
     <string name="no_connection_pic">No connection</string>
+    <string name="empty_list_text_error">No tweets found</string>
+    <string name="delete_button_desc">Delete button</string>
 </resources>
