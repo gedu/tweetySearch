@@ -16,13 +16,38 @@
 
 package com.gemapps.tweetysearch.util;
 
+import com.gemapps.tweetysearch.networking.TwitterSearchManager;
+import com.gemapps.tweetysearch.ui.model.TweetCollection;
+import com.gemapps.tweetysearch.ui.model.TweetItem;
+
+import java.util.Collections;
+import java.util.Comparator;
+
 /**
  * Created by edu on 2/20/17.
  */
 
 public class Util {
 
+    private static final int REMOVE_REDUNDANT_ID = 1;
+
     public static boolean isInteger(String value){
         return value.matches("^-?\\d+$");
+    }
+
+    public static void setMaxAndSinceIds(TweetCollection tweets){
+        Collections.sort(tweets.getTweetItems(), new Util.SortDescTweets());
+        long lowestId = tweets.getTweetItems().get(0).getId();
+        long higherId = tweets.getTweetItems().get(tweets.getTweetItems().size()-1).getId();
+        TwitterSearchManager.getInstance().setTweetMaxId(lowestId - REMOVE_REDUNDANT_ID);
+        TwitterSearchManager.getInstance().setTweetSinceId(higherId);
+    }
+
+    public static class SortDescTweets implements Comparator<TweetItem> {
+
+        @Override
+        public int compare(TweetItem a, TweetItem b) {
+            return a.getId() > b.getId() ? 1 : a.getId() < b.getId() ? -1 : 0;
+        }
     }
 }

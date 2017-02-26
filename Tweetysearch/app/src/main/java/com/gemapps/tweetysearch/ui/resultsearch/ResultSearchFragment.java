@@ -24,6 +24,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ import com.gemapps.tweetysearch.ui.butter.ButterFragment;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
 import com.gemapps.tweetysearch.ui.model.TweetItem;
 import com.gemapps.tweetysearch.ui.widget.NoConnectionHelper;
+import com.gemapps.tweetysearch.util.RealmUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -112,7 +114,7 @@ public class ResultSearchFragment extends ButterFragment {
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                TwitterSearchManager.getInstance().loadNew();
+                TwitterSearchManager.getInstance().loadNewOnce();
             }
         });
     }
@@ -131,9 +133,12 @@ public class ResultSearchFragment extends ButterFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNetworkResponseEvent(NetworkResponseBridge response){
+        Log.d(TAG, "onNetworkResponseEvent: "+response);
         TweetCollection tweetCollection = (TweetCollection) response.getContent();
+        Log.d(TAG, "onNetworkResponseEvent: "+tweetCollection.getTweetItems().size());
         switch(response.getType()){
-            case NetworkResponseBridge.TWEETS_SEARCH: addNewTweets(tweetCollection.getTweetItems());
+            case NetworkResponseBridge.TWEETS_SEARCH: RealmUtil.saveSearchResult(tweetCollection);
+            case NetworkResponseBridge.TWEETS_SEARCH_NOT_SAVE: addNewTweets(tweetCollection.getTweetItems());
                 break;
             case NetworkResponseBridge.TWEETS_LOAD_MORE: handleLoadMoreTweets(tweetCollection.getTweetItems());
                 break;
@@ -190,11 +195,11 @@ public class ResultSearchFragment extends ButterFragment {
 
             if(dy > 0){
                 int tweetsAmount = mResultView.getLayoutManager().getItemCount();
-                int lastVisibleItem = ((LinearLayoutManager)mResultView.getLayoutManager())
-                        .findLastVisibleItemPosition();
+                int[] lastVisibleItem = ((StaggeredGridLayoutManager)mResultView.getLayoutManager())
+                        .findLastVisibleItemPositions(null);
 
                 //how many of tweets should have below the current scroll position before loading more
-                if(!mIsLoadingMore && tweetsAmount <= (lastVisibleItem + LOAD_WINDOW_COUNT)){
+                if(!mIsLoadingMore && tweetsAmount <= (lastVisibleItem[lastVisibleItem.length-1] + LOAD_WINDOW_COUNT)){
                     loadMoreTweets();
                 }
 

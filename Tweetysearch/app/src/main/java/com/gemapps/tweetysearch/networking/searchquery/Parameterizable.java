@@ -24,4 +24,5 @@ public interface Parameterizable {
 
     void setParameter(String value);
     String getParameterQuery();
+//    String getHumanReadableQuery();
 }

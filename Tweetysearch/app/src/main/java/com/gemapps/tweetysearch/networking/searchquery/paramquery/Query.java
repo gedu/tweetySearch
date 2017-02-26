@@ -46,4 +46,9 @@ public class Query implements Parameterizable {
         if(mQueryValue.isEmpty()) throw new UnsupportedOperationException("UrlParameter value is empty");
         return String.format(QUERY_KEY, mQueryValue);
     }
+
+//    @Override
+//    public String getHumanReadableQuery() {
+//        return null;
+//    }
 }

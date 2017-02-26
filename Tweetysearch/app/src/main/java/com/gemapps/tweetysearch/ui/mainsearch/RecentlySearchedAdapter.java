@@ -96,6 +96,7 @@ public class RecentlySearchedAdapter
 
         @Override
         public void onClick(View v) {
+            Log.d(TAG, "onClick: ");
             if(mListener != null) mListener.onClicked(getAdapterPosition());
         }
 

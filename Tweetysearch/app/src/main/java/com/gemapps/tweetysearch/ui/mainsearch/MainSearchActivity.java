@@ -22,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.gemapps.tweetysearch.R;
 import com.gemapps.tweetysearch.networking.TwitterSearchManager;
+import com.gemapps.tweetysearch.networking.searchquery.RecentlySearchedItem;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 import com.gemapps.tweetysearch.ui.resultsearch.ResultSearchActivity;
 
@@ -51,8 +52,18 @@ public class MainSearchActivity extends AppCompatActivity
     }
 
     @Override
+    public void onSearchedItemClicked(RecentlySearchedItem searchedItem) {
+        startResultActivity();
+        TwitterSearchManager.getInstance().search(searchedItem);
+    }
+
+    @Override
     public void onSearch(UrlParameter urlParameter) {
         TwitterSearchManager.getInstance().search(urlParameter);
+        startResultActivity();
+    }
+
+    private void startResultActivity(){
         startActivity(new Intent(this, ResultSearchActivity.class));
     }
 }

@@ -20,9 +20,8 @@ import android.util.Log;
 
 import com.gemapps.tweetysearch.networking.model.NetworkResponseBridge;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
+import com.gemapps.tweetysearch.util.EventUtil;
 import com.gemapps.tweetysearch.util.GsonUtil;
-
-import org.greenrobot.eventbus.EventBus;
 
 import static com.gemapps.tweetysearch.networking.model.NetworkResponseBridge.TWEETS_EMPTY_SEARCH;
 
@@ -38,7 +37,7 @@ public class SearchTweetsHttpClient extends BaseHttpClient {
 
     public void getTweets(String url){
         Log.d(TAG, "getTweets() called with: url = <" + url+"&geocode=-22.912214,-43.230182,1km" + ">");
-        doGet(url+"&geocode=-22.912214,-43.230182,1km", NetworkResponseBridge.TWEETS_SEARCH);
+        doGet(url, NetworkResponseBridge.TWEETS_SEARCH);
     }
 
     public void getTweetsWithMaxId(String url, long maxId) {
@@ -56,15 +55,13 @@ public class SearchTweetsHttpClient extends BaseHttpClient {
         Log.d(TAG, "onSuccess() called with: tag = <" + body + ">");
         TweetCollection collection = GsonUtil.TWEETS_GSON.fromJson(body, TweetCollection.class);
         int responseType = collection.getTweetItems().size() > 0 ? tag : TWEETS_EMPTY_SEARCH;
-        NetworkResponseBridge response = new NetworkResponseBridge<>(responseType, collection);
-        EventBus.getDefault().post(response);
+        EventUtil.sendNetworkEvent(responseType, collection);
     }
 
     @Override
     protected void onFail() {
         Log.d(TAG, "onFail: ");
-        EventBus.getDefault()
-                .post(new NetworkResponseBridge<>(NetworkResponseBridge.TWEETS_LOAD_ERROR, null));
+       EventUtil.sendErrorEvent();
     }
 
 }

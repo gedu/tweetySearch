@@ -28,6 +28,8 @@ import io.realm.annotations.PrimaryKey;
 
 public class TweetCollection extends RealmObject {
 
+    public static final String COLUMN_TWEETS_ID = "mId";
+
     @SerializedName("statuses")
     private RealmList<TweetItem> mTweetItems = new RealmList<>();
     @PrimaryKey

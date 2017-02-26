@@ -16,9 +16,6 @@
 
 package com.gemapps.tweetysearch.util;
 
-import android.util.Log;
-
-import com.gemapps.tweetysearch.networking.TwitterSearchManager;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
 import com.gemapps.tweetysearch.ui.model.TweetItem;
 import com.google.gson.Gson;
@@ -37,7 +34,6 @@ import java.lang.reflect.Type;
 public class TweetsDeserializer implements JsonDeserializer<TweetCollection> {
     private static final String TAG = "TwitterArrayDeserialize";
     private static final String STATUS_KEY = "statuses";
-    private static final int REMOVE_REDUNDANT_ID = 1;
 
     @Override
     public TweetCollection deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -56,26 +52,13 @@ public class TweetsDeserializer implements JsonDeserializer<TweetCollection> {
 
     private TweetCollection populateTweetsWith(JsonArray statuses){
         TweetCollection tweetsCollection = new TweetCollection();
-        long lowestId = Long.MAX_VALUE;
-        long higherId = Long.MIN_VALUE;
+
         //// TODO: 2/15/17 CHECK IF ALWAYS THE LAST ITEM IS THE LOWEST AND THE FIRST IS THE HIGHEST
         for (JsonElement element : statuses) {
             TweetItem tweetItem = new Gson().fromJson(element, TweetItem.class);
-
-            long id = tweetItem.getId();
-            if(id < lowestId){
-                lowestId = id;
-            }
-
-            if(id > higherId){
-                higherId = id;
-            }
-
             tweetsCollection.addTweet(tweetItem);
         }
-        Log.d(TAG, "populateTweetsWith: MAX ID: "+lowestId+" SINCE ID: "+higherId);
-        TwitterSearchManager.getInstance().setTweetMaxId(lowestId - REMOVE_REDUNDANT_ID);
-        TwitterSearchManager.getInstance().setTweetSinceId(higherId);
+        Util.setMaxAndSinceIds(tweetsCollection);
         return tweetsCollection;
     }
 }

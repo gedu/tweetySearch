@@ -41,15 +41,19 @@ public final class UrlParameter {
 
     private void concatenateParams(Builder builder){
         StringBuilder stringBuilder = new StringBuilder();
-        for (Parameterizable param : builder.queries) {
+        if(builder.mCompleteParam != null) {
+            stringBuilder.append(builder.mCompleteParam);
+        }else {
+            for (Parameterizable param : builder.queries) {
 
-            stringBuilder.append(param.getParameterQuery());
-            stringBuilder.append(URL_AND);
-        }
-        stringBuilder.deleteCharAt(stringBuilder.length() -1);
-        if(builder.mResultType != null) {
-            stringBuilder.append(URL_AND);
-            stringBuilder.append(builder.mResultType.getParameterQuery());
+                stringBuilder.append(param.getParameterQuery());
+                stringBuilder.append(URL_AND);
+            }
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            if (builder.mResultType != null) {
+                stringBuilder.append(URL_AND);
+                stringBuilder.append(builder.mResultType.getParameterQuery());
+            }
         }
         mParams = stringBuilder.toString();
     }
@@ -78,7 +82,8 @@ public final class UrlParameter {
     public static class Builder {
 
         List<Parameterizable> queries = new ArrayList<>();
-        private ResultType mResultType;
+        private String mCompleteParam = null;
+        private ResultType mResultType = null;
 
         //// TODO: 2/20/17 UPDATE THIS, use just one for each
         public void addParameter(Parameterizable parameter){
@@ -93,6 +98,11 @@ public final class UrlParameter {
         public Builder setResultType(Integer type){
             if(mResultType == null) mResultType = new ResultType();
             mResultType.updateType(type);
+            return this;
+        }
+
+        public Builder setCompleteParam(String param){
+            mCompleteParam = param;
             return this;
         }
 

@@ -16,12 +16,17 @@
 
 package com.gemapps.tweetysearch.networking;
 
+import android.os.Handler;
 import android.util.Log;
 
 import com.gemapps.tweetysearch.networking.httpclient.AuthenticationHttpClient;
 import com.gemapps.tweetysearch.networking.httpclient.SearchTweetsHttpClient;
 import com.gemapps.tweetysearch.networking.model.Bearer;
+import com.gemapps.tweetysearch.networking.searchquery.RecentlySearchedItem;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
+import com.gemapps.tweetysearch.ui.model.TweetCollection;
+import com.gemapps.tweetysearch.util.EventUtil;
+import com.gemapps.tweetysearch.util.Util;
 
 import io.realm.Realm;
 
@@ -48,15 +53,12 @@ public class TwitterSearchManager {
     private Bearer mBearer;
 
     private UrlParameter mCurrentSearch;
-    private boolean mFirstSearch = true;
     private long mTweetMaxId = INVALID_MAX_ID;
     private long mTweetSinceId = INVALID_SINCE_ID;
-
 
     private TwitterSearchManager(){
         mRealm = Realm.getDefaultInstance();
         mBearer = mRealm.where(Bearer.class).findFirst();
-
     }
 
     public void authenticate(){
@@ -74,14 +76,47 @@ public class TwitterSearchManager {
         search(mCurrentSearch);
     }
 
-    public void search(UrlParameter urlParameter){
-        mCurrentSearch = urlParameter;
-        new SearchTweetsHttpClient()
-                .getTweets(TWITTER_BASE_URL + urlParameter.getParameters());
+    public void search(RecentlySearchedItem searchedItem){
+        final TweetCollection tweetCollection = getLocalResults(searchedItem.getUrlParams());
+        Log.d(TAG, "HAS LOCAL RESULTS? "+((tweetCollection == null) ? "NO" : "YES"));
+        mCurrentSearch = new UrlParameter.Builder()
+                .setCompleteParam(searchedItem.getUrlParams()).build();
+        if (tweetCollection == null) {
+            searchWith(searchedItem.getUrlParams());
+        } else {
+            //todo:remove this, check if the activity is crated after
+            Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    Util.setMaxAndSinceIds(tweetCollection);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            EventUtil.sendSearchAndNotSaveEvent(tweetCollection);
+                        }
+                    }, 1000);
+                }
+            });
+
+        }
     }
 
-    public void loadNew(){
-        Log.d(TAG, "loadNew: SINCE: "+mTweetSinceId);
+    private TweetCollection getLocalResults(String resultId){
+        return Realm.getDefaultInstance().where(TweetCollection.class)
+                .equalTo(TweetCollection.COLUMN_TWEETS_ID, resultId).findFirst();
+    }
+
+    public void search(UrlParameter urlParameter){
+        mCurrentSearch = urlParameter;
+        searchWith(urlParameter.getParameters());
+    }
+
+    private void searchWith(String urlParams) {
+        new SearchTweetsHttpClient().getTweets(TWITTER_BASE_URL + urlParams);
+    }
+
+    public void loadNewOnce(){
+        Log.d(TAG, "loadNewOnce: SINCE: "+mTweetSinceId);
         if(mTweetSinceId != INVALID_SINCE_ID){
             new SearchTweetsHttpClient()
                     .getTweetsWithSinceId(TWITTER_BASE_URL + mCurrentSearch.getParameters(),
@@ -100,6 +135,10 @@ public class TwitterSearchManager {
         }else{
             search(mCurrentSearch);
         }
+    }
+
+    public RecentlySearchedItem getSavableParameter(){
+        return mCurrentSearch == null ? null : mCurrentSearch.getSearchedItem();
     }
 
     public void setTweetMaxId(long maxId){

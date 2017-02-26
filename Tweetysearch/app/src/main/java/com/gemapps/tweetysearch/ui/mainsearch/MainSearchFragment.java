@@ -29,6 +29,7 @@ import com.gemapps.tweetysearch.networking.searchquery.RecentlySearchedItem;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 import com.gemapps.tweetysearch.networking.searchquery.paramquery.Query;
 import com.gemapps.tweetysearch.ui.butter.ButterFragment;
+import com.gemapps.tweetysearch.util.RealmUtil;
 
 import butterknife.OnClick;
 import io.realm.Realm;
@@ -48,7 +49,7 @@ public class MainSearchFragment extends ButterFragment
     private static final String TAG = "MainSearchFragment";
 
     public interface OnSearchListener {
-
+        void onSearchedItemClicked(RecentlySearchedItem searchedItem);
         void onSearch(UrlParameter urlParameter);
     }
 
@@ -133,22 +134,13 @@ public class MainSearchFragment extends ButterFragment
     @Override
     public void onClicked(int position) {
         Log.d(TAG, "onClicked: "+mSearchedItems.get(position).getUrlParams());
+        mListener.onSearchedItemClicked(mSearchedItems.get(position));
     }
 
     @Override
     public void onDeleted(final int position) {
         Log.d(TAG, "onDeleted: "+mSearchedItems.get(position).getUrlParams());
-        mRealm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                RecentlySearchedItem searchedItem = realm.where(RecentlySearchedItem.class)
-                        .equalTo(RecentlySearchedItem.COLUMN_URL_PARAM,
-                                mSearchedItems.get(position).getUrlParams())
-                        .findFirst();
-                //todo should delete results
-                searchedItem.deleteFromRealm();
-            }
-        });
+        RealmUtil.deleteSearch(mRealm, mSearchedItems.get(position));
     }
 
     @Override

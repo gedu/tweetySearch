@@ -37,6 +37,7 @@ public class NetworkResponseBridge<T> {
     public static final int TWEETS_LOAD_NEW = 1 << 1;
     public static final int TWEETS_LOAD_ERROR = 1 << 2;
     public static final int TWEETS_EMPTY_SEARCH = 1 << 3;
+    public static final int TWEETS_SEARCH_NOT_SAVE = 1 << 4;
 
     private @NetworkResponseType int mType;
     private T mContent;
