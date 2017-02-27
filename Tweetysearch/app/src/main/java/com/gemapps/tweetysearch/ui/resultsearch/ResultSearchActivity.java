@@ -16,14 +16,13 @@
 
 package com.gemapps.tweetysearch.ui.resultsearch;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.gemapps.tweetysearch.R;
+import com.gemapps.tweetysearch.networking.TwitterSearchManager;
+import com.gemapps.tweetysearch.ui.butter.ButterActivity;
 
-public class ResultSearchActivity extends AppCompatActivity {
+public class ResultSearchActivity extends ButterActivity {
 
     private static final String TAG = "ResultSearchActivity";
     private static final String RESULT_FRAGMENT_TAG = "tweety.RESULT_FRAGMENT_TAG";
@@ -33,15 +32,14 @@ public class ResultSearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_search);
         setupFragment(savedInstanceState);
+        setupToolbar();
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Log.d(TAG, "onNewIntent: "+intent);
+    private void setupToolbar(){
+        setUpButtonToolbar();
+        setToolbarTitle(TwitterSearchManager.getInstance()
+                .getSavableParameter().getUrlParams());
     }
-
-
 
     private void setupFragment(Bundle savedInstanceState){
         if(savedInstanceState == null){

@@ -31,18 +31,12 @@
         </activity-alias>
 
         <activity android:name=".ui.resultsearch.ResultSearchActivity"
-            android:launchMode="singleInstance">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
+            android:launchMode="singleInstance"
+            android:parentActivityName=".ui.mainsearch.MainSearchActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.mainsearch.MainSearchActivity"/>
 
-                <data android:scheme="http"
-                      android:host="t.c"/>
-                <data android:scheme="https"
-                      android:host="t.c"/>
-
-            </intent-filter>
         </activity>
     </application>
 
