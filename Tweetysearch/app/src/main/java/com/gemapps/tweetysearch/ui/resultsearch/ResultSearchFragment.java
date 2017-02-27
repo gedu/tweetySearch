@@ -34,6 +34,7 @@ import com.gemapps.tweetysearch.R;
 import com.gemapps.tweetysearch.networking.TwitterSearchManager;
 import com.gemapps.tweetysearch.networking.model.NetworkResponseBridge;
 import com.gemapps.tweetysearch.ui.butter.ButterFragment;
+import com.gemapps.tweetysearch.ui.mainsearch.MainSearchActivity;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
 import com.gemapps.tweetysearch.ui.model.TweetItem;
 import com.gemapps.tweetysearch.ui.widget.NoConnectionHelper;
@@ -48,6 +49,7 @@ import butterknife.BindView;
 import io.realm.RealmList;
 
 import static android.view.View.GONE;
+import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 /**
@@ -63,12 +65,15 @@ public class ResultSearchFragment extends ButterFragment {
     ProgressBar mLoadingBar;
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
+    @BindView(R.id.result_recycler_view)
+    RecyclerView mResultView;
+
     @BindView(R.id.no_connection_stub)
     ViewStub mNoConnectionStub;
     @BindView(R.id.empty_list_stub)
     ViewStub mEmptyListStub;
-    @BindView(R.id.result_recycler_view)
-    RecyclerView mResultView;
+    @BindView(R.id.search_hint_stub)
+    ViewStub mDualPanelHint;
 
     @BindInt(R.integer.result_grid_span_count)
     int mSpanCount;
@@ -77,6 +82,7 @@ public class ResultSearchFragment extends ButterFragment {
     private boolean mIsLoadingMore = false;
     private NoConnectionHelper mNoConnectionHelper;
     private Handler mHandler = new Handler(Looper.getMainLooper());
+    private boolean mIsDualPanel;
 
     public ResultSearchFragment() {
         // Required empty public constructor
@@ -94,6 +100,7 @@ public class ResultSearchFragment extends ButterFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mIsDualPanel = false;
         mAdapter = new ResultRecyclerAdapter(getActivity(), new RealmList<TweetItem>());
     }
 
@@ -106,6 +113,11 @@ public class ResultSearchFragment extends ButterFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupResultList();
+        setupDualPanelHint();
+    }
+
+    private void setupResultList(){
         mResultView.setLayoutManager(new StaggeredGridLayoutManager(mSpanCount,
                 LinearLayoutManager.VERTICAL));
         mResultView.setAdapter(mAdapter);
@@ -116,6 +128,14 @@ public class ResultSearchFragment extends ButterFragment {
                 TwitterSearchManager.getInstance().loadNewOnce();
             }
         });
+    }
+
+    private void setupDualPanelHint(){
+        mIsDualPanel = ((MainSearchActivity)getActivity()).isDualPanel();
+        if(mIsDualPanel){
+            mDualPanelHint.setVisibility(VISIBLE);
+            mLoadingBar.setVisibility(INVISIBLE);
+        }
     }
 
     @Override
@@ -146,6 +166,7 @@ public class ResultSearchFragment extends ButterFragment {
             case NetworkResponseBridge.TWEETS_EMPTY_SEARCH: showEmptyView();
         }
         mLoadingBar.setVisibility(GONE);
+        mDualPanelHint.setVisibility(GONE);
     }
 
     private void hideErrorMessage() {
@@ -199,7 +220,6 @@ public class ResultSearchFragment extends ButterFragment {
                 if(!mIsLoadingMore && tweetsAmount <= (lastVisibleItem[lastVisibleItem.length-1] + LOAD_WINDOW_COUNT)){
                     loadMoreTweets();
                 }
-
             }
         }
     };
