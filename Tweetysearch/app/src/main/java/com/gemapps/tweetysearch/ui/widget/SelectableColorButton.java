@@ -20,6 +20,8 @@ package com.gemapps.tweetysearch.ui.widget;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
@@ -35,7 +37,7 @@ import butterknife.ButterKnife;
 
 public abstract class SelectableColorButton extends Button {
     private static final String TAG = "ColoredButton";
-
+    private static final String IS_SELECTED_STATE_KEY = "tweetysearch.IS_SELECTED_STATE_KEY";
     private boolean mIsSelected;
 
     @BindColor(R.color.disable_dark)
@@ -79,10 +81,60 @@ public abstract class SelectableColorButton extends Button {
     }
 
     @Override
+    public Parcelable onSaveInstanceState() {
+        SelectableSavedState selectableSavedState = new SelectableSavedState(super.onSaveInstanceState());
+        selectableSavedState.isSelected = mIsSelected;
+        return selectableSavedState;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        if(state instanceof SelectableSavedState){
+            SelectableSavedState selectableSavedState = (SelectableSavedState) state;
+            super.onRestoreInstanceState(selectableSavedState);
+            mIsSelected = selectableSavedState.isSelected;
+            setSelected(mIsSelected);
+        }else {
+            super.onRestoreInstanceState(state);
+        }
+    }
+
+    @Override
     public void setSelected(boolean selected) {
         super.setSelected(selected);
         setTextColor(mIsSelected ? SELECTED_COLOR : IDLE_COLOR);
     }
 
     protected abstract void onClicked();
+
+    public static class SelectableSavedState extends BaseSavedState {
+
+        boolean isSelected;
+
+        public SelectableSavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        public SelectableSavedState(Parcel source) {
+            super(source);
+            isSelected = (source.readInt() == 0);
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(isSelected ? 1 : 0);
+        }
+
+        public static final Parcelable.Creator<SelectableSavedState> CREATOR
+                = new Parcelable.Creator<SelectableSavedState>() {
+            public SelectableSavedState createFromParcel(Parcel in) {
+                return new SelectableSavedState(in);
+            }
+
+            public SelectableSavedState[] newArray(int size) {
+                return new SelectableSavedState[size];
+            }
+        };
+    }
 }

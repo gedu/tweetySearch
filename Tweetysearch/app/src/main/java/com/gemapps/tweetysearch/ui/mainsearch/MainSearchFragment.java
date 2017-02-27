@@ -115,6 +115,7 @@ public class MainSearchFragment extends ButterFragment
                 onSearchPressed();
             }
         });
+        Log.d(TAG, "setupViewHelper: SETTING BUILDER");
         mViewHelper.setResultTypeBuilderToButtons(mParameterBuilder);
     }
 

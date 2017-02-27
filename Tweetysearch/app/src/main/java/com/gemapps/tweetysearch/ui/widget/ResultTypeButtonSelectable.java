@@ -18,6 +18,8 @@ package com.gemapps.tweetysearch.ui.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 
 import com.gemapps.tweetysearch.R;
@@ -32,8 +34,10 @@ import static com.gemapps.tweetysearch.networking.searchquery.paramquery.ResultT
  */
 
 public class ResultTypeButtonSelectable extends SelectableColorButton {
+    private static final String TAG = "ResultTypeButtonSelecta";
 
     private @ResultType.SEARCH_RESULT_TYPE int mType;
+    private boolean mClicked;
     private UrlParameter.Builder mBuilder;
 
     public ResultTypeButtonSelectable(Context context, AttributeSet attrs) {
@@ -52,7 +56,7 @@ public class ResultTypeButtonSelectable extends SelectableColorButton {
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes){
-
+        mClicked = false;
         final TypedArray typedArray = context.obtainStyledAttributes(attrs,
                 R.styleable.ResultTypeButtonSelectable, defStyleAttr, defStyleRes);
 
@@ -65,13 +69,67 @@ public class ResultTypeButtonSelectable extends SelectableColorButton {
     }
 
     @Override
-    protected void onClicked() {
+    public Parcelable onSaveInstanceState() {
+        ResultTypeSavedState resultTypeSavedState = new ResultTypeSavedState(super.onSaveInstanceState());
+        resultTypeSavedState.clicked = mClicked;
+        return resultTypeSavedState;
+    }
 
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        if(state instanceof ResultTypeSavedState){
+            ResultTypeSavedState resultTypeSavedState = (ResultTypeSavedState) state;
+            super.onRestoreInstanceState(resultTypeSavedState.getSuperState());
+            mClicked = resultTypeSavedState.clicked;
+            if(mClicked) setType();
+        }else {
+            super.onRestoreInstanceState(state);
+        }
+    }
+
+    @Override
+    protected void onClicked() {
+        mClicked = true;
+        setType();
+    }
+
+    private void setType(){
         if(mBuilder != null)
             mBuilder.setResultType(mType);
     }
 
     public void setResultTypeBuilder(UrlParameter.Builder builder){
         mBuilder = builder;
+    }
+
+    public static class ResultTypeSavedState extends BaseSavedState {
+
+        boolean clicked;
+
+        public ResultTypeSavedState(Parcel source) {
+            super(source);
+            clicked = source.readInt() == 1;
+        }
+
+        public ResultTypeSavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(clicked ? 1 : 0);
+        }
+
+        public static final Parcelable.Creator<ResultTypeSavedState> CREATOR
+                = new Parcelable.Creator<ResultTypeSavedState>() {
+            public ResultTypeSavedState createFromParcel(Parcel in) {
+                return new ResultTypeSavedState(in);
+            }
+
+            public ResultTypeSavedState[] newArray(int size) {
+                return new ResultTypeSavedState[size];
+            }
+        };
     }
 }
