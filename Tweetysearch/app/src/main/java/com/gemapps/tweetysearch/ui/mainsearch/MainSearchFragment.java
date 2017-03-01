@@ -78,7 +78,7 @@ public class MainSearchFragment extends ButterFragment
 
     private void setupAdapterForSearched(){
         mRealm = Realm.getDefaultInstance();
-        mSearchedItems = mRealm.where(RecentlySearchedItem.class).findAllAsync();
+        mSearchedItems = RealmUtil.findRecentlySearchedAsync();
         mSearchedAdapter = new RecentlySearchedAdapter(getContext(), mSearchedItems, this);
     }
 

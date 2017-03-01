@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import com.gemapps.tweetysearch.R;
 import com.gemapps.tweetysearch.networking.TwitterSearchManager;
 import com.gemapps.tweetysearch.networking.model.NetworkResponseBridge;
+import com.gemapps.tweetysearch.networking.searchquery.RecentlySearchedItem;
 import com.gemapps.tweetysearch.ui.butter.ButterFragment;
 import com.gemapps.tweetysearch.ui.mainsearch.MainSearchActivity;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
@@ -82,6 +83,8 @@ public class ResultSearchFragment extends ButterFragment
         mViewHelper = new ResultViewHelper(view);
         mViewHelper.setAdapter(mAdapter);
         setupDualPanelHint();
+
+        if(savedInstanceState != null) rebuildState();
     }
 
     private void setupDualPanelHint(){
@@ -94,11 +97,25 @@ public class ResultSearchFragment extends ButterFragment
                 ((MainSearchActivity)getActivity()).isDualPanel();
     }
 
+    private void rebuildState(){
+        mViewHelper.hideHintAndProgress();
+        RecentlySearchedItem searchedItem = TwitterSearchManager.getInstance().getSavableParameter();
+        if(searchedItem != null){
+            mAdapter.setTweets(RealmUtil.findSearchResultsFrom(searchedItem.getUrlParams()));
+        }
+    }
+
     @Override
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
         mViewHelper.setResultListener(this);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        RealmUtil.saveTweetsResult(mAdapter.getItems());
     }
 
     @Override

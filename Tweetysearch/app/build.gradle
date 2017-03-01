@@ -12,7 +12,7 @@ android {
         buildConfigField "String", 'TWITTER_APP_KEY', TWITTER_APP_KEY
         vectorDrawables.useSupportLibrary = true
         versionCode 1
-        versionName "1.6.1"
+        versionName "1.6.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

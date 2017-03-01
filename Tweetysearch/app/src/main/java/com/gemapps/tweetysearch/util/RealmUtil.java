@@ -21,8 +21,10 @@ import android.util.Log;
 import com.gemapps.tweetysearch.networking.TwitterSearchManager;
 import com.gemapps.tweetysearch.networking.searchquery.RecentlySearchedItem;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
+import com.gemapps.tweetysearch.ui.model.TweetItem;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 /**
@@ -32,27 +34,42 @@ import io.realm.RealmResults;
 public class RealmUtil {
 
     private static final String TAG = "RealmUtil";
+    private static final Realm mRealm = Realm.getDefaultInstance();
 
     public static void saveSearchResult(final TweetCollection tweetsResult){
-        Log.d(TAG, "SAVING TWEETS ");
         final RecentlySearchedItem queryParam = TwitterSearchManager.getInstance()
                 .getSavableParameter();
         if(queryParam == null) return;
         tweetsResult.setId(queryParam.getUrlParams());
-        Realm realm = Realm.getDefaultInstance();
-        realm.executeTransactionAsync(new Realm.Transaction() {
+        mRealm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                Log.d(TAG, "execute: ");
-                realm.copyToRealmOrUpdate(queryParam);
-                realm.copyToRealmOrUpdate(tweetsResult);
+                mRealm.copyToRealmOrUpdate(queryParam);
+                mRealm.copyToRealmOrUpdate(tweetsResult);
             }
         });
+    }
 
+    public static void saveTweetsResult(final RealmList<TweetItem> tweetItems){
+        TweetCollection tweetCollection = new TweetCollection();
+        tweetCollection.setTweetItems(tweetItems);
+        saveSearchResult(tweetCollection);
+    }
+
+    public static RecentlySearchedItem saveRecentlySearch(String mParams){
+        final RecentlySearchedItem searchedItem = new RecentlySearchedItem();
+        searchedItem.setUrlParams(mParams);
+        mRealm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.insertOrUpdate(searchedItem);
+            }
+        });
+        return searchedItem;
     }
 
     public static void deleteSearch(Realm realm, final RecentlySearchedItem searchedItem){
-        realm.executeTransaction(new Realm.Transaction() {
+        mRealm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 RecentlySearchedItem savedSearch = realm.where(RecentlySearchedItem.class)
@@ -70,5 +87,15 @@ public class RealmUtil {
                 }
             }
         });
+    }
+
+    public static TweetCollection findSearchResultsFrom(String id){
+        return mRealm.where(TweetCollection.class)
+                .equalTo(TweetCollection.COLUMN_TWEETS_ID, id)
+                .findFirst();
+    }
+
+    public static RealmResults<RecentlySearchedItem> findRecentlySearchedAsync(){
+        return mRealm.where(RecentlySearchedItem.class).findAllAsync();
     }
 }

@@ -32,6 +32,7 @@ import android.widget.TextView;
 import com.gemapps.tweetysearch.R;
 import com.gemapps.tweetysearch.ui.butter.ButterViewHolder;
 import com.gemapps.tweetysearch.ui.model.MediaEntity;
+import com.gemapps.tweetysearch.ui.model.TweetCollection;
 import com.gemapps.tweetysearch.ui.model.TweetItem;
 import com.gemapps.tweetysearch.ui.widget.LinkClickTransformation;
 import com.gemapps.tweetysearch.util.DateUtil;
@@ -107,6 +108,10 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
                 .into(target);
     }
 
+    public RealmList<TweetItem> getItems(){
+        return mTweetItems;
+    }
+
     @Override
     public int getItemCount() {
         return (mTweetItems == null) ? 0 : mTweetItems.size();
@@ -115,6 +120,12 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
     @Override
     public int getItemViewType(int position) {
         return mTweetItems.get(position).getUser() == null ? VIEW_LOADING_TYPE : VIEW_TWEET_TYPE;
+    }
+
+    public void setTweets(TweetCollection newTweets){
+        mTweetItems = new RealmList<>();
+        for (TweetItem tweet: newTweets.getTweetItems()) mTweetItems.add(tweet);
+        notifyItemRangeInserted(0, newTweets.getTweetItems().size());
     }
 
     public void addTweetsAtEnd(RealmList<TweetItem> newTweets) {

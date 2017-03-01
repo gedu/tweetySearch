@@ -17,11 +17,10 @@
 package com.gemapps.tweetysearch.networking.searchquery;
 
 import com.gemapps.tweetysearch.networking.searchquery.paramquery.ResultType;
+import com.gemapps.tweetysearch.util.RealmUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import io.realm.Realm;
 
 /**
  * Created by edu on 2/12/17.
@@ -59,16 +58,7 @@ public final class UrlParameter {
     }
 
     private void save(){
-        mSearchedItem = new RecentlySearchedItem();
-        mSearchedItem.setUrlParams(mParams);
-        Realm realm = Realm.getDefaultInstance();
-        realm.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                realm.insertOrUpdate(mSearchedItem);
-            }
-        });
-        realm.close();
+        mSearchedItem = RealmUtil.saveRecentlySearch(mParams);
     }
 
     public RecentlySearchedItem getSearchedItem() {
