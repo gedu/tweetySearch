@@ -10,6 +10,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.MarginPoint">
+        <item name="android:layout_width">@dimen/match_parent</item>
+        <item name="android:layout_height">@dimen/match_parent</item>
+    </style>
+
     <style name="BorderlessButton" parent="Base.Widget.AppCompat.Button.Borderless">
 
     </style>
