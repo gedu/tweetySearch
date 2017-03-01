@@ -12,7 +12,7 @@ android {
         buildConfigField "String", 'TWITTER_APP_KEY', TWITTER_APP_KEY
         vectorDrawables.useSupportLibrary = true
         versionCode 1
-        versionName "1.6.0"
+        versionName "1.6.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -26,6 +26,7 @@ android {
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
@@ -50,6 +51,7 @@ dependencies {
     compile 'io.realm:android-adapters:1.4.0'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.android.support:customtabs:25.1.0'
+    compile "com.hootsuite.android:nachos:1.0.0"
     testCompile 'junit:junit:4.12'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
 }

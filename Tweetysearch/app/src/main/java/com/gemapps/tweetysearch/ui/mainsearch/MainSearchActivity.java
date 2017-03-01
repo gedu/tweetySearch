@@ -19,6 +19,7 @@ package com.gemapps.tweetysearch.ui.mainsearch;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.gemapps.tweetysearch.R;
@@ -42,6 +43,7 @@ public class MainSearchActivity extends ButterActivity
     @BindView(R.id.result_fragment_container)
     FrameLayout mResultContainer;
 
+    private ResultSearchFragment mResultFragment;
     private boolean mIsDualPanel;
 
     @Override
@@ -61,6 +63,9 @@ public class MainSearchActivity extends ButterActivity
         if (savedInstanceState == null) {
             setSearchPanel();
             if (mIsDualPanel) setResultPanel();
+        } else if(mIsDualPanel){
+            mResultFragment = (ResultSearchFragment) getSupportFragmentManager()
+                    .findFragmentByTag(RESULT_FRAGMENT_TAG);
         }
     }
 
@@ -74,10 +79,11 @@ public class MainSearchActivity extends ButterActivity
     }
 
     private void setResultPanel() {
+        mResultFragment = ResultSearchFragment.newInstance();
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.result_fragment_container,
-                        ResultSearchFragment.newInstance(),
+                        mResultFragment,
                         RESULT_FRAGMENT_TAG)
                 .commit();
     }
@@ -97,5 +103,9 @@ public class MainSearchActivity extends ButterActivity
     private void startResultActivity() {
         if (!mIsDualPanel)
             startActivity(new Intent(this, ResultSearchActivity.class));
+        else {
+            Log.d(TAG, "startResultActivity: "+mResultFragment);
+            mResultFragment.showProgressBar();
+        }
     }
 }

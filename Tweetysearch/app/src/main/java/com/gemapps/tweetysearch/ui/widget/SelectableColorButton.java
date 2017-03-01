@@ -91,7 +91,7 @@ public abstract class SelectableColorButton extends Button {
     public void onRestoreInstanceState(Parcelable state) {
         if(state instanceof SelectableSavedState){
             SelectableSavedState selectableSavedState = (SelectableSavedState) state;
-            super.onRestoreInstanceState(selectableSavedState);
+            super.onRestoreInstanceState(selectableSavedState.getSuperState());
             mIsSelected = selectableSavedState.isSelected;
             setSelected(mIsSelected);
         }else {

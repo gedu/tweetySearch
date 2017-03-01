@@ -109,12 +109,6 @@ public class MainSearchFragment extends ButterFragment
     }
 
     private void setupViewHelper(){
-        mViewHelper.addSearchClickListener(new MainSearchViewHelper.SearchClickListener() {
-            @Override
-            public void onSearchClicked() {
-                onSearchPressed();
-            }
-        });
         Log.d(TAG, "setupViewHelper: SETTING BUILDER");
         mViewHelper.setResultTypeBuilderToButtons(mParameterBuilder);
     }

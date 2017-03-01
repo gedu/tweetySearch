@@ -36,11 +36,13 @@ public class Util {
     }
 
     public static void setMaxAndSinceIds(TweetCollection tweets){
-        Collections.sort(tweets.getTweetItems(), new Util.SortDescTweets());
-        long lowestId = tweets.getTweetItems().get(0).getId();
-        long higherId = tweets.getTweetItems().get(tweets.getTweetItems().size()-1).getId();
-        TwitterSearchManager.getInstance().setTweetMaxId(lowestId - REMOVE_REDUNDANT_ID);
-        TwitterSearchManager.getInstance().setTweetSinceId(higherId);
+        if(tweets.getTweetItems().size() > 0) {
+            Collections.sort(tweets.getTweetItems(), new Util.SortDescTweets());
+            long lowestId = tweets.getTweetItems().get(0).getId();
+            long higherId = tweets.getTweetItems().get(tweets.getTweetItems().size() - 1).getId();
+            TwitterSearchManager.getInstance().setTweetMaxId(lowestId - REMOVE_REDUNDANT_ID);
+            TwitterSearchManager.getInstance().setTweetSinceId(higherId);
+        }
     }
 
     public static class SortDescTweets implements Comparator<TweetItem> {

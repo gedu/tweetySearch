@@ -8,7 +8,9 @@
     <color name="accent_54">#8afb5607</color>
 
     <color name="green_accent_light">#69F0AE</color>
+    <color name="blue_accent_light">#82B1FF</color>
 
+    <color name="white">#FFF</color>
     <color name="grey_light">#d6d6d6</color>
     <color name="disable_dark">#43000000</color>
     <color name="dark_icon">@color/black_54</color>

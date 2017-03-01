@@ -18,4 +18,6 @@
     <string name="empty_list_text_error">No tweets found</string>
     <string name="delete_button_desc">Delete button</string>
     <string name="searched_result_hint">Do a search to see results</string>
+    <string name="search_desc">Search icon</string>
+    <string name="search_clear_desc">Clear query</string>
 </resources>

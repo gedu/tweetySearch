@@ -23,6 +23,7 @@ import com.gemapps.tweetysearch.networking.searchquery.RecentlySearchedItem;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by edu on 2/24/17.
@@ -57,8 +58,16 @@ public class RealmUtil {
                 RecentlySearchedItem savedSearch = realm.where(RecentlySearchedItem.class)
                         .equalTo(RecentlySearchedItem.COLUMN_URL_PARAM, searchedItem.getUrlParams())
                         .findFirst();
-                //todo should delete results
+                Log.d(TAG, "deleting: "+searchedItem.getUrlParams());
+                RealmResults<TweetCollection> tweetCollections = realm.where(TweetCollection.class)
+                        .equalTo(TweetCollection.COLUMN_TWEETS_ID, searchedItem.getUrlParams())
+                        .findAll();
                 savedSearch.deleteFromRealm();
+                for (TweetCollection tweet :
+                        tweetCollections) {
+                    Log.d(TAG, "t deleting: "+tweet.getId());
+                    tweet.deleteFromRealm();
+                }
             }
         });
     }

@@ -23,19 +23,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <android.support.v7.widget.SearchView
+                <com.gemapps.tweetysearch.ui.widget.SearchChipView
                     android:id="@+id/word_search_view"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    app:iconifiedByDefault="false"
-                    app:queryHint="@string/search_query_hint_msg"/>
+                    android:layout_height="wrap_content"/>
 
                 <Button
                     android:id="@+id/query_search_button"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/search_text"/>
             </LinearLayout>
 

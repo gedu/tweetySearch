@@ -17,18 +17,10 @@
 package com.gemapps.tweetysearch.ui.resultsearch;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
-import android.widget.ProgressBar;
 
 import com.gemapps.tweetysearch.R;
 import com.gemapps.tweetysearch.networking.TwitterSearchManager;
@@ -37,51 +29,25 @@ import com.gemapps.tweetysearch.ui.butter.ButterFragment;
 import com.gemapps.tweetysearch.ui.mainsearch.MainSearchActivity;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
 import com.gemapps.tweetysearch.ui.model.TweetItem;
-import com.gemapps.tweetysearch.ui.widget.NoConnectionHelper;
 import com.gemapps.tweetysearch.util.RealmUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import butterknife.BindInt;
-import butterknife.BindView;
 import io.realm.RealmList;
-
-import static android.view.View.GONE;
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
 
 /**
  * Use the {@link ResultSearchFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ResultSearchFragment extends ButterFragment {
+public class ResultSearchFragment extends ButterFragment
+        implements ResultViewHelper.ResultViewListener {
 
     private static final String TAG = "ResultSearchFragment";
-    private static final int LOAD_WINDOW_COUNT = 3;
-
-    @BindView(R.id.result_loading_bar)
-    ProgressBar mLoadingBar;
-    @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout mRefreshLayout;
-    @BindView(R.id.result_recycler_view)
-    RecyclerView mResultView;
-
-    @BindView(R.id.no_connection_stub)
-    ViewStub mNoConnectionStub;
-    @BindView(R.id.empty_list_stub)
-    ViewStub mEmptyListStub;
-    @BindView(R.id.search_hint_stub)
-    ViewStub mDualPanelHint;
-
-    @BindInt(R.integer.result_grid_span_count)
-    int mSpanCount;
 
     private ResultRecyclerAdapter mAdapter;
-    private boolean mIsLoadingMore = false;
-    private NoConnectionHelper mNoConnectionHelper;
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private ResultViewHelper mViewHelper;
     private boolean mIsDualPanel;
 
     public ResultSearchFragment() {
@@ -113,40 +79,32 @@ public class ResultSearchFragment extends ButterFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupResultList();
+        mViewHelper = new ResultViewHelper(view);
+        mViewHelper.setAdapter(mAdapter);
         setupDualPanelHint();
     }
 
-    private void setupResultList(){
-        mResultView.setLayoutManager(new StaggeredGridLayoutManager(mSpanCount,
-                LinearLayoutManager.VERTICAL));
-        mResultView.setAdapter(mAdapter);
-        mResultView.addOnScrollListener(mScrollListener);
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                TwitterSearchManager.getInstance().loadNewOnce();
-            }
-        });
+    private void setupDualPanelHint(){
+        mIsDualPanel = isDualPanel();
+        if(mIsDualPanel) mViewHelper.showDualPanelHint();
     }
 
-    private void setupDualPanelHint(){
-        mIsDualPanel = ((MainSearchActivity)getActivity()).isDualPanel();
-        if(mIsDualPanel){
-            mDualPanelHint.setVisibility(VISIBLE);
-            mLoadingBar.setVisibility(INVISIBLE);
-        }
+    private boolean isDualPanel(){
+        return getActivity() instanceof MainSearchActivity &&
+                ((MainSearchActivity)getActivity()).isDualPanel();
     }
 
     @Override
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+        mViewHelper.setResultListener(this);
     }
 
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
+        mViewHelper.setResultListener(null);
         super.onStop();
     }
 
@@ -161,88 +119,42 @@ public class ResultSearchFragment extends ButterFragment {
                 break;
             case NetworkResponseBridge.TWEETS_LOAD_NEW: handleLoadNewTweets(tweetCollection.getTweetItems());
                 break;
-            case NetworkResponseBridge.TWEETS_LOAD_ERROR: showErrorMessage();
+            case NetworkResponseBridge.TWEETS_LOAD_ERROR: mViewHelper.showErrorMessage();
                 break;
-            case NetworkResponseBridge.TWEETS_EMPTY_SEARCH: showEmptyView();
+            case NetworkResponseBridge.TWEETS_EMPTY_SEARCH: mViewHelper.showEmptyView();
         }
-        mLoadingBar.setVisibility(GONE);
-        mDualPanelHint.setVisibility(GONE);
-    }
-
-    private void hideErrorMessage() {
-        if(mNoConnectionHelper != null)
-            mNoConnectionHelper.hideView();
+        mViewHelper.hideHintAndProgress();
     }
 
     private void addNewTweets(RealmList<TweetItem> tweets) {
-        hideErrorMessage();
+        mViewHelper.hideErrorMessage();
         mAdapter.addTweetsAtEnd(tweets);
     }
 
     private void handleLoadMoreTweets(RealmList<TweetItem> tweets){
-        mIsLoadingMore = false;
+        mViewHelper.hidedLoadMoreProgress();
         mAdapter.removeProgressItem();
         addNewTweets(tweets);
     }
 
     private void handleLoadNewTweets(RealmList<TweetItem> tweets){
-        hideErrorMessage();
-        mRefreshLayout.setRefreshing(false);
+        mViewHelper.hideErrorMessage();
         mAdapter.addTweetsAtStart(tweets);
-        mResultView.smoothScrollToPosition(0);
+        mViewHelper.hideLoadNewOnceProgress();
     }
 
-    private void showErrorMessage() {
-        mLoadingBar.setVisibility(GONE);
-        if(mNoConnectionHelper == null)
-            mNoConnectionHelper = new NoConnectionHelper(mNoConnectionStub.inflate(), mTryAgainListener);
-        mNoConnectionHelper.showView();
+    public void showProgressBar(){
+        mViewHelper.showProgressBar();
     }
 
-    private void showEmptyView() {
-        mLoadingBar.setVisibility(GONE);
-        hideErrorMessage();
-        mEmptyListStub.setVisibility(VISIBLE);
-        mRefreshLayout.setVisibility(GONE);
+    @Override
+    public void onLoadMore() {
+        mAdapter.addProgressItem();
+        TwitterSearchManager.getInstance().loadMore();
     }
 
-    private final RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-
-            if(dy > 0){
-                int tweetsAmount = mResultView.getLayoutManager().getItemCount();
-                int[] lastVisibleItem = ((StaggeredGridLayoutManager)mResultView.getLayoutManager())
-                        .findLastVisibleItemPositions(null);
-
-                //how many of tweets should have below the current scroll position before loading more
-                if(!mIsLoadingMore && tweetsAmount <= (lastVisibleItem[lastVisibleItem.length-1] + LOAD_WINDOW_COUNT)){
-                    loadMoreTweets();
-                }
-            }
-        }
-    };
-
-    private void loadMoreTweets(){
-        mHandler.post(mLoadMoreRunnable);
+    @Override
+    public void onTryAgain() {
+        TwitterSearchManager.getInstance().reTryLastSearch();
     }
-
-    private final Runnable mLoadMoreRunnable = new Runnable() {
-        @Override
-        public void run() {
-            mIsLoadingMore = true;
-            mAdapter.addProgressItem();
-            TwitterSearchManager.getInstance().loadMore();
-        }
-    };
-
-    private NoConnectionHelper.TryAgainListener mTryAgainListener = new NoConnectionHelper.TryAgainListener() {
-        @Override
-        public void onTry() {
-            mLoadingBar.setVisibility(VISIBLE);
-            TwitterSearchManager.getInstance().reTryLastSearch();
-        }
-    };
-
 }
