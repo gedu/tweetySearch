@@ -18,6 +18,7 @@ package com.gemapps.tweetysearch.ui.resultsearch;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,12 +31,14 @@ import com.gemapps.tweetysearch.ui.butter.ButterFragment;
 import com.gemapps.tweetysearch.ui.mainsearch.MainSearchActivity;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
 import com.gemapps.tweetysearch.ui.model.TweetItem;
+import com.gemapps.tweetysearch.ui.state.ViewStateManager;
 import com.gemapps.tweetysearch.util.RealmUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import butterknife.BindBool;
 import io.realm.RealmList;
 
 /**
@@ -46,10 +49,14 @@ public class ResultSearchFragment extends ButterFragment
         implements ResultViewHelper.ResultViewListener {
 
     private static final String TAG = "ResultSearchFragment";
+    private static final String REBUILD_STATE_KEY = "tweety.REBUILD_STATE_KEY";
 
     private ResultRecyclerAdapter mAdapter;
     private ResultViewHelper mViewHelper;
     private boolean mIsDualPanel;
+
+    @BindBool(R.bool.is_sw600_land)
+    boolean isLargeLandScreen;
 
     public ResultSearchFragment() {
         // Required empty public constructor
@@ -83,8 +90,19 @@ public class ResultSearchFragment extends ButterFragment
         mViewHelper = new ResultViewHelper(view);
         mViewHelper.setAdapter(mAdapter);
         setupDualPanelHint();
+        if(savedInstanceState != null && showDualPanel()){
+            getActivity().finish();
+            TwitterSearchManager.getInstance().reTryLastSearch();
+            return;
+        }
 
-        if(savedInstanceState != null) rebuildState();
+        if(ViewStateManager.getInstance().hasToRebuild(savedInstanceState)){
+           rebuildState();
+        }
+    }
+
+    private boolean showDualPanel(){
+        return isLargeLandScreen && ViewStateManager.getInstance().hasContentToShow();
     }
 
     private void setupDualPanelHint(){
@@ -102,6 +120,7 @@ public class ResultSearchFragment extends ButterFragment
         RecentlySearchedItem searchedItem = TwitterSearchManager.getInstance().getSavableParameter();
         if(searchedItem != null){
             mAdapter.setTweets(RealmUtil.findSearchResultsFrom(searchedItem.getUrlParams()));
+            mViewHelper.scrollTo(ViewStateManager.getInstance().getVisiblePositionInTweetList());
         }
     }
 
@@ -114,6 +133,9 @@ public class ResultSearchFragment extends ButterFragment
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        int visiblePosition = mViewHelper.getFirstVisiblePosition();
+        Log.d(TAG, "onSaveInstanceState: SAVING THIS POSITION: "+visiblePosition);
+        ViewStateManager.getInstance().setVisiblePositionInTweetList(visiblePosition);
         super.onSaveInstanceState(outState);
         RealmUtil.saveTweetsResult(mAdapter.getItems());
     }
@@ -127,6 +149,7 @@ public class ResultSearchFragment extends ButterFragment
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNetworkResponseEvent(NetworkResponseBridge response){
+        Log.d(TAG, "onNetworkResponseEvent TWEETS YAY");
         TweetCollection tweetCollection = (TweetCollection) response.getContent();
         switch(response.getType()){
             case NetworkResponseBridge.TWEETS_SEARCH: RealmUtil.saveSearchResult(tweetCollection);
@@ -141,23 +164,34 @@ public class ResultSearchFragment extends ButterFragment
             case NetworkResponseBridge.TWEETS_EMPTY_SEARCH: mViewHelper.showEmptyView();
         }
         mViewHelper.hideHintAndProgress();
+        if(mIsDualPanel)
+            mViewHelper.scrollTo(ViewStateManager.getInstance().getVisiblePositionInTweetList());
     }
 
     private void addNewTweets(RealmList<TweetItem> tweets) {
+        mAdapter.clearTweets();
+
+        addTweets(tweets);
+    }
+
+    private void addTweets(RealmList<TweetItem> tweets){
         mViewHelper.hideErrorMessage();
         mAdapter.addTweetsAtEnd(tweets);
+        ViewStateManager.getInstance().setHasContentToShow();
     }
 
     private void handleLoadMoreTweets(RealmList<TweetItem> tweets){
         mViewHelper.hidedLoadMoreProgress();
         mAdapter.removeProgressItem();
-        addNewTweets(tweets);
+        addTweets(tweets);
     }
 
     private void handleLoadNewTweets(RealmList<TweetItem> tweets){
+        Log.d(TAG, "2 addNewTweets "+getId());
         mViewHelper.hideErrorMessage();
         mAdapter.addTweetsAtStart(tweets);
         mViewHelper.hideLoadNewOnceProgress();
+        ViewStateManager.getInstance().setHasContentToShow();
     }
 
     public void showProgressBar(){

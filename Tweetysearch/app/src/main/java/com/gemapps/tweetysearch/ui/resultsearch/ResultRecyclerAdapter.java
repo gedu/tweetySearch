@@ -122,6 +122,11 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
         return mTweetItems.get(position).getUser() == null ? VIEW_LOADING_TYPE : VIEW_TWEET_TYPE;
     }
 
+    public void clearTweets(){
+        mTweetItems.clear();
+        notifyDataSetChanged();
+    }
+
     public void setTweets(TweetCollection newTweets){
         mTweetItems = new RealmList<>();
         for (TweetItem tweet: newTweets.getTweetItems()) mTweetItems.add(tweet);
@@ -130,14 +135,12 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
 
     public void addTweetsAtEnd(RealmList<TweetItem> newTweets) {
         int insertedPosition = getItemCount();
-        Log.d(TAG, "addTweetsAtEnd: insertedPos "+insertedPosition+" size: "+newTweets.size() );
         mTweetItems.addAll(newTweets);
         notifyItemRangeInserted(insertedPosition, newTweets.size());
     }
 
     public void addTweetsAtStart(RealmList<TweetItem> newTweets) {
         mTweetItems.addAll(0, newTweets);
-        Log.d(TAG, "addTweetsAtStart: SIZE: "+newTweets.size());
         notifyItemRangeInserted(0, newTweets.size());
     }
 
@@ -173,7 +176,6 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
                         .setTransformationMethod(new LinkClickTransformation((Activity) mContext));
             }
             mTweetDescriptionText.setMovementMethod(LinkMovementMethod.getInstance());
-//            Linkify.addLinks(mTweetDescriptionText, Linkify.WEB_URLS);
         }
     }
 

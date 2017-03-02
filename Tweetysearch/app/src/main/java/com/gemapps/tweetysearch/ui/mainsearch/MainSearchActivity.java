@@ -19,6 +19,7 @@ package com.gemapps.tweetysearch.ui.mainsearch;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.FrameLayout;
 
@@ -29,7 +30,9 @@ import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 import com.gemapps.tweetysearch.ui.butter.ButterActivity;
 import com.gemapps.tweetysearch.ui.resultsearch.ResultSearchActivity;
 import com.gemapps.tweetysearch.ui.resultsearch.ResultSearchFragment;
+import com.gemapps.tweetysearch.ui.state.ViewStateManager;
 
+import butterknife.BindBool;
 import butterknife.BindView;
 
 public class MainSearchActivity extends ButterActivity
@@ -43,14 +46,20 @@ public class MainSearchActivity extends ButterActivity
     @BindView(R.id.result_fragment_container)
     FrameLayout mResultContainer;
 
+    @BindBool(R.bool.is_sw600_land)
+    boolean isLargeLandScreen;
+    @BindBool(R.bool.is_phone)
+    boolean mIsPhone;
+
     private ResultSearchFragment mResultFragment;
-    private boolean mIsDualPanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_search);
-        mIsDualPanel = isDualPanel();
+        setViewStates();
+        ViewStateManager.getInstance().setDualPanelState(isDualPanel());
+        checkViewStateContent();
         addSearchContent(savedInstanceState);
     }
 
@@ -58,15 +67,24 @@ public class MainSearchActivity extends ButterActivity
         return mResultContainer != null;
     }
 
-    private void addSearchContent(Bundle savedInstanceState) {
+    private void setViewStates() {
+        ViewStateManager.getInstance().initState(this);
+    }
 
-        if (savedInstanceState == null) {
-            setSearchPanel();
-            if (mIsDualPanel) setResultPanel();
-        } else if(mIsDualPanel){
-            mResultFragment = (ResultSearchFragment) getSupportFragmentManager()
-                    .findFragmentByTag(RESULT_FRAGMENT_TAG);
+    private void checkViewStateContent() {
+        if (!isLargeLandScreen && ViewStateManager.getInstance().hasToSwapContext()) {
+            startResultActivity();
         }
+    }
+
+    private void addSearchContent(Bundle savedInstanceState) {
+        if (savedInstanceState == null) setFirstState();
+        else setResultPanel();
+    }
+
+    private void setFirstState() {
+        setSearchPanel();
+        setResultPanel();
     }
 
     private void setSearchPanel() {
@@ -79,6 +97,14 @@ public class MainSearchActivity extends ButterActivity
     }
 
     private void setResultPanel() {
+        if (!isDualPanel()) {
+            Log.d(TAG, "REMOVING FRAGM");
+            Fragment fragment = getResultFragment();
+            if(fragment != null) getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+            return;
+        }
+
+        Log.d(TAG, "ADDING NEW");
         mResultFragment = ResultSearchFragment.newInstance();
         getSupportFragmentManager()
                 .beginTransaction()
@@ -86,6 +112,17 @@ public class MainSearchActivity extends ButterActivity
                         mResultFragment,
                         RESULT_FRAGMENT_TAG)
                 .commit();
+
+    }
+
+    private boolean isResultInLayout() {
+        Fragment fragment = getResultFragment();
+        return fragment != null && fragment.isInLayout();
+    }
+
+    private ResultSearchFragment getResultFragment() {
+        return (ResultSearchFragment) getSupportFragmentManager()
+                .findFragmentByTag(RESULT_FRAGMENT_TAG);
     }
 
     @Override
@@ -101,10 +138,10 @@ public class MainSearchActivity extends ButterActivity
     }
 
     private void startResultActivity() {
-        if (!mIsDualPanel)
+        if (!isDualPanel()) {
             startActivity(new Intent(this, ResultSearchActivity.class));
-        else {
-            Log.d(TAG, "startResultActivity: "+mResultFragment);
+        } else {
+            Log.d(TAG, "startResultActivity: " + mResultFragment);
             mResultFragment.showProgressBar();
         }
     }

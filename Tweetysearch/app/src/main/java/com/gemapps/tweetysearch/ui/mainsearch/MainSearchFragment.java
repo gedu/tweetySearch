@@ -128,13 +128,11 @@ public class MainSearchFragment extends ButterFragment
 
     @Override
     public void onClicked(int position) {
-        Log.d(TAG, "onClicked: "+mSearchedItems.get(position).getUrlParams());
         mListener.onSearchedItemClicked(mSearchedItems.get(position));
     }
 
     @Override
     public void onDeleted(final int position) {
-        Log.d(TAG, "onDeleted: "+mSearchedItems.get(position).getUrlParams());
         RealmUtil.deleteSearch(mRealm, mSearchedItems.get(position));
     }
 

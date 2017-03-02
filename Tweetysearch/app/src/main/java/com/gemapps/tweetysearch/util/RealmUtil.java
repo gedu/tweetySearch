@@ -51,9 +51,11 @@ public class RealmUtil {
     }
 
     public static void saveTweetsResult(final RealmList<TweetItem> tweetItems){
-        TweetCollection tweetCollection = new TweetCollection();
-        tweetCollection.setTweetItems(tweetItems);
-        saveSearchResult(tweetCollection);
+        if(tweetItems.size() > 0) {
+            TweetCollection tweetCollection = new TweetCollection();
+            tweetCollection.setTweetItems(tweetItems);
+            saveSearchResult(tweetCollection);
+        }
     }
 
     public static RecentlySearchedItem saveRecentlySearch(String mParams){

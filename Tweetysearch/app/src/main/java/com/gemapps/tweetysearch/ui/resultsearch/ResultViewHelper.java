@@ -156,6 +156,20 @@ public class ResultViewHelper {
         mResultView.smoothScrollToPosition(0);
     }
 
+    public int getFirstVisiblePosition(){
+        int[] positions = ((StaggeredGridLayoutManager) mResultView.getLayoutManager())
+                .findFirstVisibleItemPositions(null);
+        for (int pos : positions) {
+            if (pos != RecyclerView.NO_POSITION)return pos;
+        }
+        return positions[0];
+    }
+
+    public void scrollTo(int position){
+        if(position != RecyclerView.NO_POSITION)
+            mResultView.scrollToPosition(position);
+    }
+
     private final RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {

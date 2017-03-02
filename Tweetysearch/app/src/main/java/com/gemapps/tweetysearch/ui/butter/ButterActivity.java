@@ -20,7 +20,6 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
 import com.gemapps.tweetysearch.R;
 
@@ -41,7 +40,6 @@ public class ButterActivity extends AppCompatActivity {
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
         ButterKnife.bind(this);
-        Log.d(TAG, "setContentView: mTOOLBAR: "+mToolbar);
         if(mToolbar != null) setSupportActionBar(mToolbar);
     }
 

@@ -73,7 +73,7 @@ public class TwitterSearchManager {
     }
 
     public void reTryLastSearch(){
-        search(mCurrentSearch);
+        search(mCurrentSearch.getSearchedItem());
     }
 
     public void search(RecentlySearchedItem searchedItem){
@@ -92,6 +92,7 @@ public class TwitterSearchManager {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            Log.d(TAG, "run: SENDING RESULTS");
                             EventUtil.sendSearchAndNotSaveEvent(tweetCollection);
                         }
                     }, 1000);
