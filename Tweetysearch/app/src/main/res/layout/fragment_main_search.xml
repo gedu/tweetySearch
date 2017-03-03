@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <com.gemapps.tweetysearch.ui.widget.SearchChipView
+                <com.gemapps.tweetysearch.ui.widget.search.SearchChipView
                     android:id="@+id/word_search_view"
                     android:layout_width="0dp"
                     android:layout_weight="1"

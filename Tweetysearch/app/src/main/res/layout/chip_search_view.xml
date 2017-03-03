@@ -18,23 +18,40 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="2dp"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="2dp">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:paddingLeft="8dp"
-        android:paddingStart="8dp"
-        android:paddingRight="8dp"
-        android:paddingEnd="8dp"
         android:contentDescription="@string/search_desc"
+        android:paddingEnd="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingStart="8dp"
         app:srcCompat="@drawable/ic_search_black_24px"/>
 
-    <include layout="@layout/search_edit_text"/>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <include layout="@layout/search_edit_text"/>
+
+        <TextView
+            android:id="@+id/error_search_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/search_error_text"
+            android:visibility="gone"
+            tools:text="10 words tops"/>
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/search_close_btn"
@@ -42,13 +59,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:background="?attr/selectableItemBackgroundBorderless"
-        app:srcCompat="@drawable/ic_close"
+        android:clickable="true"
         android:contentDescription="@string/search_clear_desc"
         android:focusable="true"
-        android:clickable="true"
+        android:paddingEnd="8dp"
         android:paddingLeft="8dp"
-        android:paddingStart="8dp"
         android:paddingRight="8dp"
-        android:paddingEnd="8dp"/>
+        android:paddingStart="8dp"
+        app:srcCompat="@drawable/ic_close"/>
 
 </LinearLayout>

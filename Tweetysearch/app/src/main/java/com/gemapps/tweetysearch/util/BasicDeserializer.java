@@ -30,12 +30,12 @@ import java.lang.reflect.Type;
  * Created by edu on 2/13/17.
  */
 
-public class TwitterDeserializer<T> implements JsonDeserializer<T> {
+public class BasicDeserializer<T> implements JsonDeserializer<T> {
 
-    private static final String TAG = "TwitterDeserializer";
+    private static final String TAG = "BasicDeserializer";
     private String mKey;
 
-    public TwitterDeserializer(@Nullable String key) {
+    public BasicDeserializer(@Nullable String key) {
         mKey = key;
     }
 

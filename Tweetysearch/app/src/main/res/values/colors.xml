@@ -6,6 +6,8 @@
     <color name="accent_icon">@color/accent_54</color>
     <color name="accent_icon_text">@color/accent_54</color>
     <color name="accent_54">#8afb5607</color>
+    <color name="search_error_text">@color/red_500</color>
+    <color name="red_500">#F44336</color>
 
     <color name="green_accent_light">#69F0AE</color>
     <color name="blue_accent_light">#82B1FF</color>

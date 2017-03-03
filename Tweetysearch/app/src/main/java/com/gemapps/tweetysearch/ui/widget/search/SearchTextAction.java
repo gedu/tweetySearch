@@ -14,21 +14,29 @@
  *    limitations under the License.
  */
 
-package com.gemapps.tweetysearch.ui.state;
+package com.gemapps.tweetysearch.ui.widget.search;
 
 import android.content.Context;
+import android.support.annotation.StringRes;
+import android.view.View;
 
 import com.gemapps.tweetysearch.R;
 
 /**
- * Created by edu on 3/2/17.
+ * Created by edu on 3/3/17.
  */
 
-public class StateFactory {
+public interface SearchTextAction {
 
-    public static ActionState getDeviceState(Context context){
-        boolean isPhone = context.getResources().getBoolean(R.bool.is_phone);
-        if(isPhone) return new PhoneState();
-        else return new TabletState();
-    }
+    static final int MAX_AMOUNT_OF_WORDS = 10;
+    static final int MIN_AMOUNT_OF_WORDS = 0;
+    static final int EMPTY_ERROR_TEXT = R.string.search_text_empty_error;
+    static final int EXCEEDED_ERROR_TEXT = R.string.search_text_exceeded_error;
+    static final int COMPLEXITY_ERROR_TEXT = R.string.search_text_complexity_error;
+
+    void init(Context context, View rootView);
+    String getText();
+    boolean isContentValid();
+    void setText(String text);
+    @StringRes int getErrorText();
 }

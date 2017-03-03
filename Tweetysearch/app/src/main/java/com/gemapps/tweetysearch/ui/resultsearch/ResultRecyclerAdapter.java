@@ -92,8 +92,8 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
 
 
                 if(item.getEntity().getMediaEntity().size() > 2){
-                    for (MediaEntity me :
-                            item.getEntity().getMediaEntity()) {
+                    Log.d(TAG, "HAS MORE PHOTOS");
+                    for (MediaEntity me : item.getEntity().getMediaEntity()) {
                         Log.d(TAG, "onBindViewHolder: MEDIA URL: "+me.getMediaUrl());
                     }
                 }

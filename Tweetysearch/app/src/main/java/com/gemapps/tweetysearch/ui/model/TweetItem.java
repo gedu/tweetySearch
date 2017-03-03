@@ -88,4 +88,11 @@ public class TweetItem extends RealmObject {
     public void setEntity(Entity entity) {
         mEntity = entity;
     }
+
+    @Override
+    public String toString() {
+        return "ID: " + mIdStr + " TEXT: " + mText + " USER NAME: "+mUser.getName() +
+                "DESCRIPTION: " + mUser.getDescription() +
+                " MEDIA: " + (mEntity.hasMedia() ? mEntity.getMediaEntity().get(0).getMediaUrl() : "NONE");
+    }
 }

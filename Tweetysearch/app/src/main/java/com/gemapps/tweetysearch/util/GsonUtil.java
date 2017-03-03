@@ -28,7 +28,7 @@ import com.google.gson.GsonBuilder;
 public class GsonUtil {
 
     public static final Gson BEARER_GSON = new GsonBuilder().registerTypeAdapter(Bearer.class,
-            new TwitterDeserializer<Bearer>(null)).create();
+            new BasicDeserializer<Bearer>(null)).create();
 
     public static final Gson TWEETS_GSON = new GsonBuilder().registerTypeAdapter(TweetCollection.class,
             new TweetsDeserializer()).create();

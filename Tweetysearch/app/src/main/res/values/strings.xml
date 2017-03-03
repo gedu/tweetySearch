@@ -20,4 +20,8 @@
     <string name="searched_result_hint">Do a search to see results</string>
     <string name="search_desc">Search icon</string>
     <string name="search_clear_desc">Clear query</string>
+
+    <string name="search_text_empty_error">Please write a word to search</string>
+    <string name="search_text_exceeded_error">Please write less of 10 words</string>
+    <string name="search_text_complexity_error">Too complex to analyze, please re-write</string>
 </resources>

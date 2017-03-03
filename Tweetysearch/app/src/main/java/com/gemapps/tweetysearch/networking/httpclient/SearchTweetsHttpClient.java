@@ -16,8 +16,6 @@
 
 package com.gemapps.tweetysearch.networking.httpclient;
 
-import android.util.Log;
-
 import com.gemapps.tweetysearch.networking.model.NetworkResponseBridge;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
 import com.gemapps.tweetysearch.util.EventUtil;
@@ -36,23 +34,19 @@ public class SearchTweetsHttpClient extends BaseHttpClient {
     private static final String SINCE_ID_PARAM = "&since_id=%s";
 
     public void getTweets(String url){
-        Log.d(TAG, "getTweets() called with: url = <" + url);
         doGet(url, NetworkResponseBridge.TWEETS_SEARCH);
     }
 
     public void getTweetsWithMaxId(String url, long maxId) {
-        Log.d(TAG, "getTweetsWithMaxId() called with: url = <" + url + ">, maxId = <" + maxId + ">");
         doGet(url+String.format(MAX_ID_PARAM, maxId), NetworkResponseBridge.TWEETS_LOAD_MORE);
     }
 
     public void getTweetsWithSinceId(String url, long tweetSinceId) {
-        Log.d(TAG, "getTweetsWithSinceId() called with: url = <" + url + ">, tweetSinceId = <" + tweetSinceId + ">");
         doGet(url+String.format(SINCE_ID_PARAM, tweetSinceId), NetworkResponseBridge.TWEETS_LOAD_NEW);
     }
 
     @Override
     protected void onSuccess(String body, int tag) {
-        Log.d(TAG, "onSuccess() called with: tag = <" + body + ">");
         TweetCollection collection = GsonUtil.TWEETS_GSON.fromJson(body, TweetCollection.class);
         int responseType = collection.getTweetItems().size() > 0 ? tag : TWEETS_EMPTY_SEARCH;
         EventUtil.sendNetworkEvent(responseType, collection);
@@ -60,7 +54,6 @@ public class SearchTweetsHttpClient extends BaseHttpClient {
 
     @Override
     protected void onFail() {
-        Log.d(TAG, "onFail: ");
        EventUtil.sendErrorEvent();
     }
 

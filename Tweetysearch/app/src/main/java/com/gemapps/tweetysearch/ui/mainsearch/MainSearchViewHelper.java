@@ -16,6 +16,7 @@
 
 package com.gemapps.tweetysearch.ui.mainsearch;
 
+import android.support.annotation.StringRes;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +25,7 @@ import android.view.View;
 import com.gemapps.tweetysearch.R;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 import com.gemapps.tweetysearch.ui.widget.ResultTypeButtonSelectable;
-import com.gemapps.tweetysearch.ui.widget.SearchChipView;
+import com.gemapps.tweetysearch.ui.widget.search.SearchChipView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -73,6 +74,22 @@ public class MainSearchViewHelper {
         dividerItemDecoration.setDrawable(mRecyclerView.getContext()
                 .getResources().getDrawable(R.drawable.divider));
         return dividerItemDecoration;
+    }
+
+    public boolean isSearchTextValid(){
+        return mSearchView.isContentValid();
+    }
+
+    public @StringRes int getSearchErrorText(){
+        return mSearchView.getErrorText();
+    }
+
+    public void showErrorSearchLabel(){
+        mSearchView.showErrorLabel();
+    }
+
+    public void hideErrorSearchLabel(){
+        mSearchView.hideErrorLabel();
     }
 
     public void setRecentlySearchAdapter(RecentlySearchedAdapter adapter){

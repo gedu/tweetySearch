@@ -14,53 +14,35 @@
  *    limitations under the License.
  */
 
-package com.gemapps.tweetysearch.ui.widget;
+package com.gemapps.tweetysearch.ui.widget.search;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutCompat;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
+import android.view.View;
 
 import com.gemapps.tweetysearch.R;
 import com.hootsuite.nachos.NachoTextView;
 import com.hootsuite.nachos.chip.Chip;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 import static com.hootsuite.nachos.terminator.ChipTerminatorHandler.BEHAVIOR_CHIPIFY_ALL;
 
 /**
- * Created by edu on 2/28/17.
+ * Created by edu on 3/3/17.
  */
 
-public class SearchChipView extends LinearLayoutCompat {
+public class JellybeanSearchTextView implements SearchTextAction {
 
-    private static final String TAG = "SearchChipView";
+    private NachoTextView mSearchText;
+    private int mErrorIntRes;
 
-    @BindView(R.id.search_edit_text)
-    NachoTextView mSearchText;
-
-    public SearchChipView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
-    }
-
-    public SearchChipView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context);
-    }
-
-    private void init(Context context){
-        LayoutInflater.from(context)
-                .inflate(R.layout.chip_search_view, this, true);
-        ButterKnife.bind(this);
+    @Override
+    public void init(Context context, View rootView) {
+        mSearchText = (NachoTextView) rootView.findViewById(R.id.search_edit_text);
         mSearchText.addChipTerminator(',', BEHAVIOR_CHIPIFY_ALL);
         mSearchText.setChipTextColorResource(R.color.white);
     }
 
-    public String getText(){
+    @Override
+    public String getText() {
         mSearchText.chipifyAllUnterminatedTokens();
         StringBuilder builder = new StringBuilder();
         for (Chip chip : mSearchText.getAllChips()) {
@@ -70,8 +52,27 @@ public class SearchChipView extends LinearLayoutCompat {
         return builder.toString().trim();
     }
 
-    @OnClick(R.id.search_close_btn)
-    public void onCloseClicked(){
-        mSearchText.setText("");
+    @Override
+    public boolean isContentValid() {
+        int size = getAmountOfChips();
+        return size > MIN_AMOUNT_OF_WORDS && size <= MAX_AMOUNT_OF_WORDS;
+    }
+
+    private int getAmountOfChips(){
+        mSearchText.chipifyAllUnterminatedTokens();
+        return mSearchText.getAllChips().size();
+    }
+
+    @Override
+    public void setText(String text) {
+        mSearchText.setText(text);
+    }
+
+    @Override
+    public int getErrorText() {
+        int size = getAmountOfChips();
+        if(size <= MIN_AMOUNT_OF_WORDS) return EMPTY_ERROR_TEXT;
+        else if (size > MAX_AMOUNT_OF_WORDS) return EXCEEDED_ERROR_TEXT;
+        else return COMPLEXITY_ERROR_TEXT;
     }
 }

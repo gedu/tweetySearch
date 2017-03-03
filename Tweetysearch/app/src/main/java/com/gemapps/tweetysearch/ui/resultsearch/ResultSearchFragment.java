@@ -49,7 +49,6 @@ public class ResultSearchFragment extends ButterFragment
         implements ResultViewHelper.ResultViewListener {
 
     private static final String TAG = "ResultSearchFragment";
-    private static final String REBUILD_STATE_KEY = "tweety.REBUILD_STATE_KEY";
 
     private ResultRecyclerAdapter mAdapter;
     private ResultViewHelper mViewHelper;
@@ -134,7 +133,6 @@ public class ResultSearchFragment extends ButterFragment
     @Override
     public void onSaveInstanceState(Bundle outState) {
         int visiblePosition = mViewHelper.getFirstVisiblePosition();
-        Log.d(TAG, "onSaveInstanceState: SAVING THIS POSITION: "+visiblePosition);
         ViewStateManager.getInstance().setVisiblePositionInTweetList(visiblePosition);
         super.onSaveInstanceState(outState);
         RealmUtil.saveTweetsResult(mAdapter.getItems());
@@ -187,7 +185,6 @@ public class ResultSearchFragment extends ButterFragment
     }
 
     private void handleLoadNewTweets(RealmList<TweetItem> tweets){
-        Log.d(TAG, "2 addNewTweets "+getId());
         mViewHelper.hideErrorMessage();
         mAdapter.addTweetsAtStart(tweets);
         mViewHelper.hideLoadNewOnceProgress();

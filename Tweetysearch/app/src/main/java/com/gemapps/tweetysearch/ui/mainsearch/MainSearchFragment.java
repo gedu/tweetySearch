@@ -19,7 +19,6 @@ package com.gemapps.tweetysearch.ui.mainsearch;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,23 +102,25 @@ public class MainSearchFragment extends ButterFragment
                              Bundle savedInstanceState) {
         View rootView = createView(inflater, container, R.layout.fragment_main_search);
         mViewHelper = new MainSearchViewHelper(rootView);
-        mViewHelper.setRecentlySearchAdapter(mSearchedAdapter);
         setupViewHelper();
         return rootView;
     }
 
     private void setupViewHelper(){
-        Log.d(TAG, "setupViewHelper: SETTING BUILDER");
+        mViewHelper.setRecentlySearchAdapter(mSearchedAdapter);
         mViewHelper.setResultTypeBuilderToButtons(mParameterBuilder);
     }
 
     @OnClick(R.id.query_search_button)
     public void onSearchClicked(){
-        onSearchPressed();
+        if(mViewHelper.isSearchTextValid()) onSearchPressed();
+        else mViewHelper.showErrorSearchLabel();
+
     }
 
     public void onSearchPressed() {
         if (mListener != null) {
+            mViewHelper.hideErrorSearchLabel();
             mQuery.setParameter(mViewHelper.getTextToSearch());
             mParameterBuilder.addParameter(mQuery);
             mListener.onSearch(mParameterBuilder.build());

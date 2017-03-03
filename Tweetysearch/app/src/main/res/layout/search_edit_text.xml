@@ -18,12 +18,12 @@
 <EditText
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/search_edit_text"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:layout_weight="1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
-    android:paddingLeft="8dp"
-    android:paddingStart="8dp"
-    android:paddingRight="8dp"
+    android:hint="@string/search_query_hint_msg"
+    android:orientation="vertical"
     android:paddingEnd="8dp"
-    android:orientation="vertical"/>
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingStart="8dp"/>
