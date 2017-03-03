@@ -38,7 +38,7 @@ public class ResultSearchActivity extends ButterActivity {
     private void setupToolbar(){
         setUpButtonToolbar();
         setToolbarTitle(TwitterSearchManager.getInstance()
-                .getSavableParameter().getUrlParams());
+                .getSavableParameter().getHumanParams());
     }
 
     private void setupFragment(Bundle savedInstanceState){

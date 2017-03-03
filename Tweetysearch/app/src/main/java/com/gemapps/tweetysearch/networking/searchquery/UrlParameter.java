@@ -16,11 +16,10 @@
 
 package com.gemapps.tweetysearch.networking.searchquery;
 
+import com.gemapps.tweetysearch.networking.searchquery.paramquery.CompleteQuery;
+import com.gemapps.tweetysearch.networking.searchquery.paramquery.Query;
 import com.gemapps.tweetysearch.networking.searchquery.paramquery.ResultType;
 import com.gemapps.tweetysearch.util.RealmUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by edu on 2/12/17.
@@ -30,7 +29,9 @@ public final class UrlParameter {
 
     private static final String TAG = "UrlParameter";
     private static final String URL_AND ="&";
+    private static final String HUMAN_AND =", ";
     private String mParams;
+    private String mHumanParams;
     private RecentlySearchedItem mSearchedItem;
 
     private UrlParameter(Builder builder) {
@@ -39,26 +40,44 @@ public final class UrlParameter {
     }
 
     private void concatenateParams(Builder builder){
-        StringBuilder stringBuilder = new StringBuilder();
-        if(builder.mCompleteParam != null) {
-            stringBuilder.append(builder.mCompleteParam);
-        }else {
-            for (Parameterizable param : builder.queries) {
+        setUrlParams(builder);
+        setHumanReadableParams(builder);
+    }
 
-                stringBuilder.append(param.getParameterQuery());
-                stringBuilder.append(URL_AND);
-            }
-            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+    private void setUrlParams(Builder builder){
+        StringBuilder urlStringBuilder = new StringBuilder();
+
+        if(builder.mCompleteParam != null) {
+            urlStringBuilder.append(builder.mCompleteParam.getParameterQuery());
+        }else {
+            urlStringBuilder.append(builder.mQuery.getParameterQuery());
+
             if (builder.mResultType != null) {
-                stringBuilder.append(URL_AND);
-                stringBuilder.append(builder.mResultType.getParameterQuery());
+                urlStringBuilder.append(URL_AND);
+                urlStringBuilder.append(builder.mResultType.getParameterQuery());
             }
         }
-        mParams = stringBuilder.toString();
+        mParams = urlStringBuilder.toString();
+    }
+
+    private void setHumanReadableParams(Builder builder){
+        StringBuilder humanReadableBuilder = new StringBuilder();
+
+        if(builder.mCompleteParam != null) {
+            humanReadableBuilder.append(builder.mCompleteParam.getHumanReadableQuery());
+        }else {
+            humanReadableBuilder.append(builder.mQuery.getHumanReadableQuery());
+
+            if (builder.mResultType != null) {
+                humanReadableBuilder.append(HUMAN_AND);
+                humanReadableBuilder.append(builder.mResultType.getHumanReadableQuery());
+            }
+        }
+        mHumanParams = humanReadableBuilder.toString();
     }
 
     private void save(){
-        mSearchedItem = RealmUtil.saveRecentlySearch(mParams);
+        mSearchedItem = RealmUtil.saveRecentlySearch(mParams, mHumanParams);
     }
 
     public RecentlySearchedItem getSearchedItem() {
@@ -71,18 +90,12 @@ public final class UrlParameter {
 
     public static class Builder {
 
-        List<Parameterizable> queries = new ArrayList<>();
-        private String mCompleteParam = null;
+        private CompleteQuery mCompleteParam = null;
         private ResultType mResultType = null;
+        private Query mQuery = null;
 
-        //// TODO: 2/20/17 UPDATE THIS, use just one for each
-        public void addParameter(Parameterizable parameter){
-            removeParameter(parameter);
-            queries.add(parameter);
-        }
-
-        public void removeParameter(Parameterizable parameter){
-            if(queries.contains(parameter)) queries.remove(parameter);
+        public Builder(Query query){
+            mQuery = query;
         }
 
         public Builder setResultType(Integer type){
@@ -91,13 +104,9 @@ public final class UrlParameter {
             return this;
         }
 
-        public Builder setCompleteParam(String param){
-            mCompleteParam = param;
+        public Builder setCompleteParam(CompleteQuery completeQuery){
+            mCompleteParam = completeQuery;
             return this;
-        }
-
-        public List<Parameterizable> getQueries(){
-            return queries;
         }
 
         public UrlParameter build(){

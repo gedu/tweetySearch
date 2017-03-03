@@ -20,7 +20,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.gemapps.tweetysearch.R;
@@ -98,13 +97,11 @@ public class MainSearchActivity extends ButterActivity
 
     private void setResultPanel() {
         if (!isDualPanel()) {
-            Log.d(TAG, "REMOVING FRAGM");
             Fragment fragment = getResultFragment();
             if(fragment != null) getSupportFragmentManager().beginTransaction().remove(fragment).commit();
             return;
         }
 
-        Log.d(TAG, "ADDING NEW");
         mResultFragment = ResultSearchFragment.newInstance();
         getSupportFragmentManager()
                 .beginTransaction()
@@ -141,7 +138,6 @@ public class MainSearchActivity extends ButterActivity
         if (!isDualPanel()) {
             startActivity(new Intent(this, ResultSearchActivity.class));
         } else {
-            Log.d(TAG, "startResultActivity: " + mResultFragment);
             mResultFragment.showProgressBar();
         }
     }

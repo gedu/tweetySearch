@@ -46,10 +46,10 @@ public class ResultType implements Parameterizable {
     }
 
     @Override
-    public void setParameter(String value) {
+    public void setParameter(String value) {}
 
-        //// TODO: 2/20/17 show message invalid method
-    }
+    @Override
+    public void setHumanParameter(String value) {}
 
     @Override
     public String getParameterQuery() {
@@ -57,6 +57,16 @@ public class ResultType implements Parameterizable {
             case RECENT: return formatType("recent");
             case POPULAR: return formatType("popular");
             case MIXED: return formatType("mixed");
+            default: return "";
+        }
+    }
+
+    @Override
+    public String getHumanReadableQuery() {
+        switch (mSearchType){
+            case RECENT: return "recent";
+            case POPULAR: return "popular";
+            case MIXED: return "recent & popular";
             default: return "";
         }
     }

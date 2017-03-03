@@ -24,6 +24,7 @@ import android.view.View;
 
 import com.gemapps.tweetysearch.R;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
+import com.gemapps.tweetysearch.ui.widget.EmptyView;
 import com.gemapps.tweetysearch.ui.widget.ResultTypeButtonSelectable;
 import com.gemapps.tweetysearch.ui.widget.search.SearchChipView;
 
@@ -47,6 +48,8 @@ public class MainSearchViewHelper {
     ResultTypeButtonSelectable mPopularSearchButton;
     @BindView(R.id.word_search_view)
     SearchChipView mSearchView;
+    @BindView(R.id.empty_view)
+    EmptyView mEmptyView;
     @BindView(R.id.recently_searched_recycler)
     RecyclerView mRecyclerView;
 
@@ -103,5 +106,13 @@ public class MainSearchViewHelper {
 
     public String getTextToSearch(){
         return mSearchView.getText();
+    }
+
+    public void showEmptyView(){
+        mEmptyView.setVisibility(View.VISIBLE);
+    }
+
+    public void hideEmptyView(){
+        mEmptyView.setVisibility(View.GONE);
     }
 }

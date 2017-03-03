@@ -16,46 +16,41 @@
 
 package com.gemapps.tweetysearch.networking.searchquery.paramquery;
 
-import android.support.annotation.NonNull;
-
 import com.gemapps.tweetysearch.networking.searchquery.Parameterizable;
 
-import java.net.URLEncoder;
-
 /**
- * Created by edu on 2/13/17.
+ * Created by edu on 3/3/17.
  */
 
-public class Query implements Parameterizable {
+public class CompleteQuery implements Parameterizable {
 
-    private static final String QUERY_KEY = "q=%s";
-    private String mQueryValue = "";
-    private String mHumanQueryValue = "";
+    private String mUrlQuery;
+    private String mHumanQuery;
 
-    public Query(@NonNull String queryValue) {
-        setParameter(queryValue);
+    public CompleteQuery() {}
+
+    public CompleteQuery(String urlQuery, String humanQuery) {
+        mUrlQuery = urlQuery;
+        mHumanQuery = humanQuery;
     }
 
     @Override
-    public void setParameter(@NonNull String value) {
-        setHumanParameter(value);
-        mQueryValue = URLEncoder.encode(value);
+    public void setParameter(String value) {
+        mUrlQuery = value;
     }
 
     @Override
     public void setHumanParameter(String value) {
-        mHumanQueryValue = value;
+        mHumanQuery = value;
     }
 
     @Override
     public String getParameterQuery() {
-        //// TODO: 2/13/17 Create a custom Exception
-        if(mQueryValue.isEmpty()) throw new UnsupportedOperationException("UrlParameter value is empty");
-        return String.format(QUERY_KEY, mQueryValue);
+        return mUrlQuery;
     }
 
     @Override
     public String getHumanReadableQuery() {
-        return mHumanQueryValue;
+        return mHumanQuery;
     }
 }

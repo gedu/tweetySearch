@@ -58,9 +58,10 @@ public class RealmUtil {
         }
     }
 
-    public static RecentlySearchedItem saveRecentlySearch(String mParams){
+    public static RecentlySearchedItem saveRecentlySearch(String urlParams, String humanParams){
         final RecentlySearchedItem searchedItem = new RecentlySearchedItem();
-        searchedItem.setUrlParams(mParams);
+        searchedItem.setUrlParams(urlParams);
+        searchedItem.setHumanParams(humanParams);
         mRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {

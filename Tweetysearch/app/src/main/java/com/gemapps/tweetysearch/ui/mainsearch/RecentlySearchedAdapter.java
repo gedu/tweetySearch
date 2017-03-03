@@ -79,8 +79,7 @@ public class RecentlySearchedAdapter
     }
 
     private void setupViewUsing(RecentlyViewHolder holder, final RecentlySearchedItem searchedItem){
-
-        holder.mSearchedQueryText.setText(searchedItem.getUrlParams());
+        holder.mSearchedQueryText.setText(searchedItem.getHumanParams());
     }
 
     class RecentlyViewHolder extends ButterViewHolder

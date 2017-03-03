@@ -32,6 +32,7 @@ import com.gemapps.tweetysearch.util.RealmUtil;
 
 import butterknife.OnClick;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
 /**
@@ -79,11 +80,25 @@ public class MainSearchFragment extends ButterFragment
         mRealm = Realm.getDefaultInstance();
         mSearchedItems = RealmUtil.findRecentlySearchedAsync();
         mSearchedAdapter = new RecentlySearchedAdapter(getContext(), mSearchedItems, this);
+        mSearchedItems.addChangeListener(new RealmChangeListener<RealmResults<RecentlySearchedItem>>() {
+            @Override
+            public void onChange(RealmResults<RecentlySearchedItem> element) {
+                showEmptySearchedView();
+            }
+        });
+    }
+
+    private void showEmptySearchedView(){
+        if(mSearchedAdapter.getItemCount() == 0){
+            mViewHelper.showEmptyView();
+        }else{
+            mViewHelper.hideEmptyView();
+        }
     }
 
     private void setupQueryBuilder(){
-        mParameterBuilder = new UrlParameter.Builder();
         mQuery = new Query("");
+        mParameterBuilder = new UrlParameter.Builder(mQuery);
     }
 
     @Override
@@ -103,6 +118,7 @@ public class MainSearchFragment extends ButterFragment
         View rootView = createView(inflater, container, R.layout.fragment_main_search);
         mViewHelper = new MainSearchViewHelper(rootView);
         setupViewHelper();
+        showEmptySearchedView();
         return rootView;
     }
 
@@ -122,7 +138,6 @@ public class MainSearchFragment extends ButterFragment
         if (mListener != null) {
             mViewHelper.hideErrorSearchLabel();
             mQuery.setParameter(mViewHelper.getTextToSearch());
-            mParameterBuilder.addParameter(mQuery);
             mListener.onSearch(mParameterBuilder.build());
         }
     }
@@ -140,6 +155,7 @@ public class MainSearchFragment extends ButterFragment
     @Override
     public void onDetach() {
         mListener = null;
+        mSearchedItems.removeChangeListeners();
         mRealm.close();
         super.onDetach();
     }

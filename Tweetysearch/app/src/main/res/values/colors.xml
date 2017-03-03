@@ -13,6 +13,7 @@
     <color name="blue_accent_light">#82B1FF</color>
 
     <color name="white">#FFF</color>
+    <color name="grey_light_54">#8ad6d6d6</color> <!-- 54% of grey_light-->
     <color name="grey_light">#d6d6d6</color>
     <color name="disable_dark">#43000000</color>
     <color name="dark_icon">@color/black_54</color>

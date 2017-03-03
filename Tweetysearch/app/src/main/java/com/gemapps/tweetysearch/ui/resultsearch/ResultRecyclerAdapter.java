@@ -104,7 +104,7 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
     private void loadImageInto(ImageView target, String imageUrl){
         Picasso.with(mContext)
                 .load(imageUrl)
-                .placeholder(R.drawable.ic_landscape_black_24px)
+                .placeholder(R.color.grey_light_54)
                 .into(target);
     }
 

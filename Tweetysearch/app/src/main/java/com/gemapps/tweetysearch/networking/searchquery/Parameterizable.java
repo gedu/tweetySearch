@@ -23,6 +23,7 @@ package com.gemapps.tweetysearch.networking.searchquery;
 public interface Parameterizable {
 
     void setParameter(String value);
+    void setHumanParameter(String value);
     String getParameterQuery();
-//    String getHumanReadableQuery();
+    String getHumanReadableQuery();
 }

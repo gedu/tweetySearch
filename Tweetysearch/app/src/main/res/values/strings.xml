@@ -24,4 +24,5 @@
     <string name="search_text_empty_error">Please write a word to search</string>
     <string name="search_text_exceeded_error">Please write less of 10 words</string>
     <string name="search_text_complexity_error">Too complex to analyze, please re-write</string>
+    <string name="empty_image_desc">Empty bird cage</string>
 </resources>

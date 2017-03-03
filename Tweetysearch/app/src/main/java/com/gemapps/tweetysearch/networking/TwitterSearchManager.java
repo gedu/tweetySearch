@@ -24,6 +24,8 @@ import com.gemapps.tweetysearch.networking.httpclient.SearchTweetsHttpClient;
 import com.gemapps.tweetysearch.networking.model.Bearer;
 import com.gemapps.tweetysearch.networking.searchquery.RecentlySearchedItem;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
+import com.gemapps.tweetysearch.networking.searchquery.paramquery.CompleteQuery;
+import com.gemapps.tweetysearch.networking.searchquery.paramquery.Query;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
 import com.gemapps.tweetysearch.util.EventUtil;
 import com.gemapps.tweetysearch.util.Util;
@@ -78,9 +80,8 @@ public class TwitterSearchManager {
 
     public void search(RecentlySearchedItem searchedItem){
         final TweetCollection tweetCollection = getLocalResults(searchedItem.getUrlParams());
-        Log.d(TAG, "HAS LOCAL RESULTS? "+((tweetCollection == null) ? "NO" : "YES"));
-        mCurrentSearch = new UrlParameter.Builder()
-                .setCompleteParam(searchedItem.getUrlParams()).build();
+
+        mCurrentSearch = buildUrlParameterFrom(searchedItem);
         if (tweetCollection == null) {
             searchWith(searchedItem.getUrlParams());
         } else {
@@ -98,8 +99,14 @@ public class TwitterSearchManager {
                     }, 1000);
                 }
             });
-
         }
+    }
+
+    private UrlParameter buildUrlParameterFrom(RecentlySearchedItem searchedItem){
+        UrlParameter.Builder builder = new UrlParameter.Builder(new Query(""));
+        builder.setCompleteParam(new CompleteQuery(searchedItem.getUrlParams(),
+                searchedItem.getHumanParams()));
+        return builder.build();
     }
 
     private TweetCollection getLocalResults(String resultId){

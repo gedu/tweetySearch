@@ -64,16 +64,6 @@
                     android:text="@string/popular_text"
                     app:search_type="popular"/>
 
-                <!--<Button-->
-                    <!--android:id="@+id/location_search_button"-->
-                    <!--style="@style/BorderlessButton"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_weight="1"-->
-                    <!--android:contentDescription="@string/search_by_location_desc"-->
-                    <!--android:drawableTop="@drawable/ic_location_on_black_24px"-->
-                    <!--android:text="location"/>-->
-
             </LinearLayout>
 
 
@@ -84,13 +74,28 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_margin="16dp"
         android:text="@string/recently_searched_title_txt"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recently_searched_recycler"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:listitem="@layout/recently_searched_item_list"/>
+        android:layout_height="wrap_content">
+
+        <com.gemapps.tweetysearch.ui.widget.EmptyView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:emptyTitle="No history"
+            app:emptyMessage="Do some search to see content here"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recently_searched_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/recently_searched_item_list"/>
+
+
+    </FrameLayout>
 
 </LinearLayout>
