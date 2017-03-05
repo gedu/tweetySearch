@@ -19,5 +19,6 @@
     <declare-styleable name="EmptyView">
         <attr name="emptyTitle" format="string|reference"/>
         <attr name="emptyMessage" format="string|reference"/>
+        <attr name="emptyIcon" format="integer"/>
     </declare-styleable>
 </resources>

@@ -18,9 +18,11 @@ package com.gemapps.tweetysearch.ui.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gemapps.tweetysearch.R;
@@ -38,9 +40,12 @@ public class EmptyView extends LinearLayoutCompat {
     TextView mEmptyTitleView;
     @BindView(R.id.empty_msg_view)
     TextView mEmptyMsgView;
+    @BindView(R.id.empty_image)
+    ImageView mImageView;
 
     private String mTitle;
     private String mMessage;
+    private Drawable mEmptyImage;
 
     public EmptyView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -62,12 +67,17 @@ public class EmptyView extends LinearLayoutCompat {
         try{
             mTitle = typedArray.getString(R.styleable.EmptyView_emptyTitle);
             mMessage = typedArray.getString(R.styleable.EmptyView_emptyMessage);
+            mEmptyImage = typedArray.getDrawable(R.styleable.EmptyView_emptyIcon);
         }finally {
             typedArray.recycle();
         }
-
+        ;
         mEmptyTitleView.setText(isTitleEmpty() ? "Sorry tweety flew away": mTitle);
         mEmptyMsgView.setText(isMessageEmpty() ? "" : mMessage);
+        if(mImageView != null) {
+            mImageView.setImageDrawable(mEmptyImage);
+            invalidate();
+        }
     }
 
     private boolean isTitleEmpty(){

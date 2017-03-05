@@ -70,10 +70,11 @@
         <com.gemapps.tweetysearch.ui.widget.EmptyView
             android:id="@+id/empty_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:visibility="gone"
             app:emptyMessage="Do some search to see content here"
-            app:emptyTitle="No history"/>
+            app:emptyTitle="No history"
+            app:emptyIcon="@drawable/ic_empty_bird_cage"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recently_searched_recycler"

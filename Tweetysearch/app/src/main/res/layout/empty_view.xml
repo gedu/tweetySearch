@@ -42,11 +42,12 @@
         tools:text="Try something more general"/>
 
     <ImageView
+        android:id="@+id/empty_image"
         android:layout_width="@dimen/empty_image_width"
         android:layout_height="@dimen/empty_image_height"
-        android:layout_gravity="center_horizontal|bottom"
+        android:layout_gravity="center"
         android:contentDescription="@string/empty_image_desc"
-        android:scaleType="fitStart"
+        android:scaleType="fitXY"
         app:srcCompat="@drawable/ic_empty_bird_cage"/>
 
 </merge>

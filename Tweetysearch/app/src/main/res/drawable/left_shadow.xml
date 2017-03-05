@@ -15,19 +15,11 @@
   ~    limitations under the License.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal">
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <com.gemapps.tweetysearch.ui.widget.EmptyView
-        android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:emptyMessage="Do some search to see content here"
-        app:emptyTitle="No searched content"
-        app:emptyIcon="@drawable/ic_tweet_search"/>
+    <gradient
+        android:endColor="@color/black_transparent"
+        android:startColor="@color/black_54"/>
 
-</LinearLayout>
+
+</shape>

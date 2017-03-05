@@ -23,5 +23,6 @@
     <color name="secondary_text_dark">@color/black_54</color>
     <color name="black_54">#8a000000</color>
     <color name="dialog_background">#78000000</color>
+    <color name="black_transparent">#00000000</color>
 
 </resources>
