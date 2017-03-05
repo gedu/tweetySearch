@@ -7,6 +7,8 @@
 
     <dimen name="empty_image_width">200dp</dimen>
     <dimen name="empty_image_height">300dp</dimen>
+    <dimen name="detail_min_height">500dp</dimen>
+    <dimen name="detail_width">390dp</dimen>
 
     <item name="match_parent" format="integer" type="dimen">-1</item>
     <item name="wrap_content" format="integer" type="dimen">-2</item>

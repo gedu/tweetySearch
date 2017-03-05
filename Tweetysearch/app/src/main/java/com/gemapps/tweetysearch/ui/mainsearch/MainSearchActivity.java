@@ -21,7 +21,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import com.gemapps.tweetysearch.R;
@@ -29,6 +29,8 @@ import com.gemapps.tweetysearch.networking.TwitterSearchManager;
 import com.gemapps.tweetysearch.networking.searchquery.RecentlySearchedItem;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 import com.gemapps.tweetysearch.ui.butter.ButterActivity;
+import com.gemapps.tweetysearch.ui.detailsearch.DetailSearchActivity;
+import com.gemapps.tweetysearch.ui.model.TweetItem;
 import com.gemapps.tweetysearch.ui.resultsearch.ResultSearchActivity;
 import com.gemapps.tweetysearch.ui.resultsearch.ResultSearchFragment;
 import com.gemapps.tweetysearch.ui.state.ViewStateManager;
@@ -38,7 +40,8 @@ import butterknife.BindBool;
 import butterknife.BindView;
 
 public class MainSearchActivity extends ButterActivity
-        implements MainSearchFragment.OnSearchListener {
+        implements MainSearchFragment.OnSearchListener,
+        ResultSearchFragment.ResultSearchListener {
 
     private static final String TAG = "MainSearchActivity";
     private static final String SEARCH_FRAGMENT_TAG = "tweety.SEARCH_FRAGMENT_TAG";
@@ -58,7 +61,6 @@ public class MainSearchActivity extends ButterActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: ");
         setContentView(R.layout.activity_main_search);
         setViewStates();
         ViewStateManager.getInstance().setDualPanelState(isDualPanel());
@@ -149,6 +151,17 @@ public class MainSearchActivity extends ButterActivity
             }
         } else {
             mResultFragment.showProgressBar();
+        }
+    }
+
+    @Override
+    public void onImageClicked(View v, TweetItem tweet) {
+        if (Util.isLollipop()) {
+            startActivity(DetailSearchActivity.getInstance(v, tweet.bundleMainContent(), DetailSearchActivity.class),
+                    ActivityOptions.makeSceneTransitionAnimation(this, v,
+                            getResources().getString(R.string.tweet_pic_trans_name)).toBundle());
+        }else{
+            startActivity(DetailSearchActivity.getInstance(v, DetailSearchActivity.class));
         }
     }
 }

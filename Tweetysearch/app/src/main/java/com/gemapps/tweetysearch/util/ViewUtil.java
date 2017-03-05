@@ -16,6 +16,8 @@
 
 package com.gemapps.tweetysearch.util;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Outline;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -28,6 +30,15 @@ import android.view.ViewOutlineProvider;
 
 
 public class ViewUtil {
+
+    /**
+     * Helper method to determine if the device has an large screen. For
+     * example, 7" tablets are large.
+     */
+    public static boolean isLargeTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static final ViewOutlineProvider CIRCULAR_OUTLINE = new ViewOutlineProvider() {
