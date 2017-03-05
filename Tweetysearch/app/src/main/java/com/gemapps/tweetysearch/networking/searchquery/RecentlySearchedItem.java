@@ -29,10 +29,7 @@ public class RecentlySearchedItem extends RealmObject {
 
     @PrimaryKey
     private String mUrlParams;
-
     private String mHumanParams;
-
-    public RecentlySearchedItem() {}
 
     public String getUrlParams() {
         return mUrlParams;

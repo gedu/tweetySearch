@@ -16,6 +16,8 @@
 
 package com.gemapps.tweetysearch.ui.model;
 
+import android.os.Bundle;
+
 import com.google.gson.annotations.SerializedName;
 
 import io.realm.RealmObject;
@@ -25,6 +27,10 @@ import io.realm.RealmObject;
  */
 
 public class TweetItem extends RealmObject {
+
+    public static final String TWEET_CREATION_DATE_KEY = "tweety.TWEET_CREATION_DATE_KEY";
+    public static final String TWEET_USER_NAME_KEY = "tweety.TWEET_USER_NAME_KEY";
+    public static final String TWEET_MEDIA_URL_KEY = "tweety.TWEET_MEDIA_URL_KEY";
 
     @SerializedName("id_str")
     private String mIdStr;
@@ -87,6 +93,17 @@ public class TweetItem extends RealmObject {
 
     public void setEntity(Entity entity) {
         mEntity = entity;
+    }
+
+    public Bundle bundleMainContent(){
+        Bundle bundle = new Bundle();
+
+        bundle.putString(TWEET_CREATION_DATE_KEY, mCreatedAt);
+        bundle.putString(TWEET_USER_NAME_KEY, mUser.getName());
+        if(mEntity.hasMedia())
+            bundle.putString(TWEET_MEDIA_URL_KEY, mEntity.getMediaEntity().get(0).getMediaUrl());
+
+        return bundle;
     }
 
     @Override

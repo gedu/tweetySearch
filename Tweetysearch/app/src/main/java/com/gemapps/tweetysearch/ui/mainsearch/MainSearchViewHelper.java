@@ -17,6 +17,7 @@
 package com.gemapps.tweetysearch.ui.mainsearch;
 
 import android.support.annotation.StringRes;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,7 @@ import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 import com.gemapps.tweetysearch.ui.widget.EmptyView;
 import com.gemapps.tweetysearch.ui.widget.ResultTypeButtonSelectable;
 import com.gemapps.tweetysearch.ui.widget.search.SearchChipView;
+import com.gemapps.tweetysearch.ui.widget.search.SearchTextAction;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -61,11 +63,18 @@ public class MainSearchViewHelper {
     private void setupSearchedRecycler(){
         mRecyclerView.setLayoutManager(getLinearLayout());
         mRecyclerView.addItemDecoration(getDivider());
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
     private LinearLayoutManager getLinearLayout(){
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mRecyclerView.getContext(),
-                LIST_ORIENTATION, false);
+                LIST_ORIENTATION, false){
+            @Override
+            public boolean supportsPredictiveItemAnimations() {
+                return true;
+            }
+        };
+
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         return linearLayoutManager;
@@ -102,6 +111,10 @@ public class MainSearchViewHelper {
     public void setResultTypeBuilderToButtons(UrlParameter.Builder builder){
         mRecentSearchButton.setResultTypeBuilder(builder);
         mPopularSearchButton.setResultTypeBuilder(builder);
+    }
+
+    public void addSearchActionListener(SearchTextAction.SearchTextActionListener listener){
+        mSearchView.addSearchActionListener(listener);
     }
 
     public String getTextToSearch(){

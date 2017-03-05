@@ -17,25 +17,10 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
+            <com.gemapps.tweetysearch.ui.widget.search.SearchChipView
+                android:id="@+id/word_search_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.gemapps.tweetysearch.ui.widget.search.SearchChipView
-                    android:id="@+id/word_search_view"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"/>
-
-                <Button
-                    android:id="@+id/query_search_button"
-                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/search_text"/>
-            </LinearLayout>
+                android:layout_height="wrap_content"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -75,24 +60,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="@string/recently_searched_title_txt"/>
+        android:text="@string/recently_searched_title_txt"
+        android:textColor="@android:color/white"/>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <com.gemapps.tweetysearch.ui.widget.EmptyView
             android:id="@+id/empty_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"
-            app:emptyTitle="No history"
-            app:emptyMessage="Do some search to see content here"/>
+            app:emptyMessage="Do some search to see content here"
+            app:emptyTitle="No history"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recently_searched_recycler"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             tools:listitem="@layout/recently_searched_item_list"/>
 
 

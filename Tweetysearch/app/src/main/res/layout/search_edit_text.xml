@@ -23,6 +23,8 @@
     android:layout_gravity="center_vertical"
     android:hint="@string/search_query_hint_msg"
     android:orientation="vertical"
+    android:imeOptions="actionSearch"
+    android:inputType="text"
     android:paddingEnd="8dp"
     android:paddingLeft="8dp"
     android:paddingRight="8dp"

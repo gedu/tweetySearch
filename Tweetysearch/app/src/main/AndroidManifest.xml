@@ -3,8 +3,9 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="com.gemapps.tweetysearch">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-sdk tools:overrideLibrary="android.support.customtabs, com.hootsuite.nachos"/>
+
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:name=".TweetyApplication"
@@ -15,8 +16,9 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.mainsearch.MainSearchActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="stateHidden">
         </activity>
 
         <activity-alias
@@ -30,13 +32,18 @@
             </intent-filter>
         </activity-alias>
 
-        <activity android:name=".ui.resultsearch.ResultSearchActivity"
-            android:launchMode="singleInstance"
+        <activity
+            android:name=".ui.resultsearch.ResultSearchActivity"
+            android:launchMode="singleTask"
             android:parentActivityName=".ui.mainsearch.MainSearchActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.mainsearch.MainSearchActivity"/>
-
+        </activity>
+        <activity
+            android:name=".ui.detailsearch.DetailSearchActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.Dialog">
         </activity>
     </application>
 

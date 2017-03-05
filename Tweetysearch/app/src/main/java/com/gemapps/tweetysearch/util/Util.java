@@ -16,6 +16,8 @@
 
 package com.gemapps.tweetysearch.util;
 
+import android.os.Build;
+
 import com.gemapps.tweetysearch.networking.TwitterSearchManager;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
 import com.gemapps.tweetysearch.ui.model.TweetItem;
@@ -43,6 +45,10 @@ public class Util {
             TwitterSearchManager.getInstance().setTweetMaxId(lowestId - REMOVE_REDUNDANT_ID);
             TwitterSearchManager.getInstance().setTweetSinceId(higherId);
         }
+    }
+
+    public static boolean isLollipop(){
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
     public static class SortDescTweets implements Comparator<TweetItem> {

@@ -5,6 +5,7 @@
 
     <style name="AppTheme" parent="AppTheme.Base">
         <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@color/bg_app</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -13,6 +14,12 @@
     <style name="AppTheme.MarginPoint">
         <item name="android:layout_width">@dimen/match_parent</item>
         <item name="android:layout_height">@dimen/match_parent</item>
+    </style>
+
+    <style name="AppTheme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <!--<item name="android:windowFullscreen">true</item>-->
     </style>
 
     <style name="BorderlessButton" parent="Base.Widget.AppCompat.Button.Borderless">

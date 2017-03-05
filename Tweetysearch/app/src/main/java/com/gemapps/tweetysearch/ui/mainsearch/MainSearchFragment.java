@@ -28,9 +28,9 @@ import com.gemapps.tweetysearch.networking.searchquery.RecentlySearchedItem;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 import com.gemapps.tweetysearch.networking.searchquery.paramquery.Query;
 import com.gemapps.tweetysearch.ui.butter.ButterFragment;
+import com.gemapps.tweetysearch.ui.widget.search.SearchTextAction;
 import com.gemapps.tweetysearch.util.RealmUtil;
 
-import butterknife.OnClick;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
@@ -44,7 +44,8 @@ import io.realm.RealmResults;
  * create an instance of this fragment.
  */
 public class MainSearchFragment extends ButterFragment
-        implements RecentlySearchedAdapter.RecentlySearchedListener {
+        implements RecentlySearchedAdapter.RecentlySearchedListener,
+        SearchTextAction.SearchTextActionListener {
 
     private static final String TAG = "MainSearchFragment";
 
@@ -125,13 +126,13 @@ public class MainSearchFragment extends ButterFragment
     private void setupViewHelper(){
         mViewHelper.setRecentlySearchAdapter(mSearchedAdapter);
         mViewHelper.setResultTypeBuilderToButtons(mParameterBuilder);
+        mViewHelper.addSearchActionListener(this);
     }
 
-    @OnClick(R.id.query_search_button)
-    public void onSearchClicked(){
+    @Override
+    public void onSearchAction() {
         if(mViewHelper.isSearchTextValid()) onSearchPressed();
         else mViewHelper.showErrorSearchLabel();
-
     }
 
     public void onSearchPressed() {

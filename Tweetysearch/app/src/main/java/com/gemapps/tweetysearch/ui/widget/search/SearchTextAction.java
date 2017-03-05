@@ -28,6 +28,10 @@ import com.gemapps.tweetysearch.R;
 
 public interface SearchTextAction {
 
+    interface SearchTextActionListener {
+        void onSearchAction();
+    }
+
     static final int MAX_AMOUNT_OF_WORDS = 10;
     static final int MIN_AMOUNT_OF_WORDS = 0;
     static final int EMPTY_ERROR_TEXT = R.string.search_text_empty_error;
@@ -35,6 +39,7 @@ public interface SearchTextAction {
     static final int COMPLEXITY_ERROR_TEXT = R.string.search_text_complexity_error;
 
     void init(Context context, View rootView);
+    void addSearchActionListener(SearchTextActionListener listener);
     String getText();
     boolean isContentValid();
     void setText(String text);

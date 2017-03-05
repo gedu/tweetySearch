@@ -16,10 +16,12 @@
 
 package com.gemapps.tweetysearch.ui.mainsearch;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.gemapps.tweetysearch.R;
@@ -30,6 +32,7 @@ import com.gemapps.tweetysearch.ui.butter.ButterActivity;
 import com.gemapps.tweetysearch.ui.resultsearch.ResultSearchActivity;
 import com.gemapps.tweetysearch.ui.resultsearch.ResultSearchFragment;
 import com.gemapps.tweetysearch.ui.state.ViewStateManager;
+import com.gemapps.tweetysearch.util.Util;
 
 import butterknife.BindBool;
 import butterknife.BindView;
@@ -55,6 +58,7 @@ public class MainSearchActivity extends ButterActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: ");
         setContentView(R.layout.activity_main_search);
         setViewStates();
         ViewStateManager.getInstance().setDualPanelState(isDualPanel());
@@ -136,7 +140,13 @@ public class MainSearchActivity extends ButterActivity
 
     private void startResultActivity() {
         if (!isDualPanel()) {
-            startActivity(new Intent(this, ResultSearchActivity.class));
+            if (Util.isLollipop()) {
+                startActivity(new Intent(this, ResultSearchActivity.class),
+                        ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+            }else{
+                Intent intent = new Intent(this, ResultSearchActivity.class);
+                startActivity(intent);
+            }
         } else {
             mResultFragment.showProgressBar();
         }

@@ -15,20 +15,25 @@
   ~    limitations under the License.
   -->
 
-<com.hootsuite.nachos.NachoTextView
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/search_edit_text"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical"
-    android:hint="@string/search_query_hint_msg"
-    android:orientation="vertical"
-    android:imeOptions="actionSearch"
-    android:inputType="text"
-    android:paddingEnd="8dp"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:paddingStart="8dp"
-    app:chipBackground="@color/blue_accent_light"
-    app:chipTextColor="@color/white"/>
+    android:layout_height="match_parent"
+    tools:context="com.gemapps.tweetysearch.ui.detailsearch.DetailSearchActivity">
+
+    <include layout="@layout/translucent_bg"/>
+
+    <fragment
+        android:id="@+id/card_panel_container"
+        android:name="com.gemapps.tweetysearch.ui.detailsearch.DetailSearchFragment"
+        android:layout_width="390dp"
+        android:layout_height="wrap_content"
+        android:minHeight="500dp"
+        android:layout_gravity="center"
+        tools:layout="@layout/fragment_detail_search"
+        tools:layout_editor_absoluteY="8dp"
+        tools:layout_editor_absoluteX="8dp"/>
+
+</android.support.design.widget.CoordinatorLayout>

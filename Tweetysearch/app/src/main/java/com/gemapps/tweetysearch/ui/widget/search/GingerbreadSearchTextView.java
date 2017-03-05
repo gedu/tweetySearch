@@ -17,8 +17,11 @@
 package com.gemapps.tweetysearch.ui.widget.search;
 
 import android.content.Context;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.gemapps.tweetysearch.R;
 
@@ -34,6 +37,23 @@ public class GingerbreadSearchTextView implements SearchTextAction {
     public void init(Context context, View rootView) {
 
         mEditText = (EditText) rootView.findViewById(R.id.search_edit_text);
+        mEditText.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+    }
+
+    @Override
+    public void addSearchActionListener(final SearchTextActionListener listener) {
+        mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                if(actionId == EditorInfo.IME_ACTION_SEARCH){
+                    listener.onSearchAction();
+                    return true;
+                }
+
+                return false;
+            }
+        });
     }
 
     @Override

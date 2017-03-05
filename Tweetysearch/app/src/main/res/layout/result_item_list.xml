@@ -83,6 +83,7 @@
 
         <ImageView
             android:id="@+id/tweet_picture_image"
+            android:transitionName="@string/tweet_pic_trans_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"

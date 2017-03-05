@@ -22,6 +22,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:layout_marginRight="8dp"
+    android:layout_marginEnd="8dp"
     android:padding="2dp">
 
     <ImageView
@@ -61,11 +63,12 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:contentDescription="@string/search_clear_desc"
+        android:layout_marginLeft="-36dp"
+        android:layout_marginStart="-36dp"
         android:focusable="true"
         android:paddingEnd="8dp"
-        android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingStart="8dp"
-        app:srcCompat="@drawable/ic_close"/>
+        app:srcCompat="@drawable/ic_close_black"/>
 
 </LinearLayout>

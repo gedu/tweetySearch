@@ -39,6 +39,10 @@ public class SearchViewWrapper {
         mSearchTextView.init(context, rootView);
     }
 
+    public void addSearchActionListener(SearchTextAction.SearchTextActionListener listener){
+        mSearchTextView.addSearchActionListener(listener);
+    }
+
     public String getText(){
         return mSearchTextView.getText();
     }

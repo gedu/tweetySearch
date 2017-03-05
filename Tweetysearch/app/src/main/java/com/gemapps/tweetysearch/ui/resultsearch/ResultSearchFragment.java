@@ -16,6 +16,7 @@
 
 package com.gemapps.tweetysearch.ui.resultsearch;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -46,12 +47,18 @@ import io.realm.RealmList;
  * create an instance of this fragment.
  */
 public class ResultSearchFragment extends ButterFragment
-        implements ResultViewHelper.ResultViewListener {
+        implements ResultViewHelper.ResultViewListener,
+        ResultRecyclerAdapter.ResultAdapterListener {
 
     private static final String TAG = "ResultSearchFragment";
 
+    public interface ResultSearchListener {
+        void onImageClicked(View v, TweetItem tweet);
+    }
+
     private ResultRecyclerAdapter mAdapter;
     private ResultViewHelper mViewHelper;
+    private ResultSearchListener mListener;
     private boolean mIsDualPanel;
 
     @BindBool(R.bool.is_sw600_land)
@@ -74,7 +81,18 @@ public class ResultSearchFragment extends ButterFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mIsDualPanel = false;
-        mAdapter = new ResultRecyclerAdapter(getActivity(), new RealmList<TweetItem>());
+        mAdapter = new ResultRecyclerAdapter(getActivity(), new RealmList<TweetItem>(), this);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof ResultSearchListener) {
+            mListener = (ResultSearchListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
@@ -202,7 +220,20 @@ public class ResultSearchFragment extends ButterFragment
     }
 
     @Override
+    public void onDetach() {
+        mListener = null;
+
+        super.onDetach();
+    }
+
+    @Override
     public void onTryAgain() {
         TwitterSearchManager.getInstance().reTryLastSearch();
+    }
+
+    @Override
+    public void onImageClicked(View v, int posClicked) {
+        if(mListener != null)
+            mListener.onImageClicked(v, mAdapter.getItemBy(posClicked));
     }
 }

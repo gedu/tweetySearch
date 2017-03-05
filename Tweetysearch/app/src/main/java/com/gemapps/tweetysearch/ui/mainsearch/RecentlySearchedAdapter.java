@@ -101,7 +101,9 @@ public class RecentlySearchedAdapter
 
         @OnClick(R.id.delete_button)
         public void onClick() {
-            if(mListener != null) mListener.onDeleted(getAdapterPosition());
+            int itemDeletedPos = getAdapterPosition();
+            if(mListener != null) mListener.onDeleted(itemDeletedPos);
+            notifyItemRemoved(itemDeletedPos);
         }
 
     }

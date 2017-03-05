@@ -16,13 +16,19 @@
 
 package com.gemapps.tweetysearch.ui.resultsearch;
 
+import android.app.ActivityOptions;
 import android.os.Bundle;
+import android.view.View;
 
 import com.gemapps.tweetysearch.R;
 import com.gemapps.tweetysearch.networking.TwitterSearchManager;
 import com.gemapps.tweetysearch.ui.butter.ButterActivity;
+import com.gemapps.tweetysearch.ui.detailsearch.DetailSearchActivity;
+import com.gemapps.tweetysearch.ui.model.TweetItem;
+import com.gemapps.tweetysearch.util.Util;
 
-public class ResultSearchActivity extends ButterActivity {
+public class ResultSearchActivity extends ButterActivity
+        implements ResultSearchFragment.ResultSearchListener {
 
     private static final String TAG = "ResultSearchActivity";
     private static final String RESULT_FRAGMENT_TAG = "tweety.RESULT_FRAGMENT_TAG";
@@ -33,6 +39,9 @@ public class ResultSearchActivity extends ButterActivity {
         setContentView(R.layout.activity_result_search);
         setupFragment(savedInstanceState);
         setupToolbar();
+//        if (Util.isLollipop()) {
+//            getWindow().setExitTransition(new Explode());
+//        }
     }
 
     private void setupToolbar(){
@@ -49,6 +58,17 @@ public class ResultSearchActivity extends ButterActivity {
                             ResultSearchFragment.newInstance(),
                             RESULT_FRAGMENT_TAG)
                     .commit();
+        }
+    }
+
+    @Override
+    public void onImageClicked(View v, TweetItem tweet) {
+        if (Util.isLollipop()) {
+            startActivity(DetailSearchActivity.getInstance(v, tweet.bundleMainContent(), DetailSearchActivity.class),
+                    ActivityOptions.makeSceneTransitionAnimation(this, v,
+                            getResources().getString(R.string.tweet_pic_trans_name)).toBundle());
+        }else{
+            startActivity(DetailSearchActivity.getInstance(v, DetailSearchActivity.class));
         }
     }
 }

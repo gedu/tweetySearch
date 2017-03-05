@@ -22,11 +22,12 @@
     android:id="@+id/activity_result_search"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context="com.gemapps.tweetysearch.ui.resultsearch.ResultSearchActivity">
 
     <include layout="@layout/toolbar"/>
 
-    <FrameLayout
+    <android.support.design.widget.CoordinatorLayout
         android:id="@+id/main_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

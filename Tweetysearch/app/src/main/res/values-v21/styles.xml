@@ -15,20 +15,12 @@
   ~    limitations under the License.
   -->
 
-<com.hootsuite.nachos.NachoTextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/search_edit_text"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical"
-    android:hint="@string/search_query_hint_msg"
-    android:orientation="vertical"
-    android:imeOptions="actionSearch"
-    android:inputType="text"
-    android:paddingEnd="8dp"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:paddingStart="8dp"
-    app:chipBackground="@color/blue_accent_light"
-    app:chipTextColor="@color/white"/>
+<resources>
+    <style name="AppTheme" parent="AppTheme.Base">
+        <item name="android:windowBackground">@color/bg_app</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowActivityTransitions">true</item>
+    </style>
+</resources>

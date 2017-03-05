@@ -46,17 +46,24 @@ import io.realm.RealmList;
  */
 public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder> {
 
+    public interface ResultAdapterListener {
+        void onImageClicked(View v, int posClicked);
+    }
+
     private static final String TAG = "ResultRecyclerAdapter";
     private static final int VIEW_LOADING_TYPE = 0;
     private static final int VIEW_TWEET_TYPE = 1;
     private Context mContext;
+    private ResultAdapterListener mListener;
     private RealmList<TweetItem> mTweetItems;
     private TweetItem mProgressItem;//TODO: update this to manage in a better way
 
-    public ResultRecyclerAdapter(Context context, RealmList<TweetItem> items) {
+    public ResultRecyclerAdapter(Context context, RealmList<TweetItem> items,
+                                 ResultAdapterListener listener) {
         mContext = context;
         this.mTweetItems = items;
         mProgressItem = new TweetItem();
+        mListener = listener;
     }
 
     @Override
@@ -115,6 +122,10 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
     @Override
     public int getItemCount() {
         return (mTweetItems == null) ? 0 : mTweetItems.size();
+    }
+
+    public TweetItem getItemBy(int position){
+        return mTweetItems.get(position);
     }
 
     @Override
@@ -176,6 +187,12 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ButterViewHolder
                         .setTransformationMethod(new LinkClickTransformation((Activity) mContext));
             }
             mTweetDescriptionText.setMovementMethod(LinkMovementMethod.getInstance());
+            mTweetImages.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(mListener != null) mListener.onImageClicked(v, getAdapterPosition());
+                }
+            });
         }
     }
 

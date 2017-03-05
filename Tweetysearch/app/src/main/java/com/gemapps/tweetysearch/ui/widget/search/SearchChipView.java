@@ -42,6 +42,7 @@ public class SearchChipView extends LinearLayoutCompat {
 
     @BindView(R.id.error_search_text)
     TextView mErrorSearchText;
+
     SearchViewWrapper mViewWrapper;
     private boolean mIsShowingError;
 
@@ -60,6 +61,7 @@ public class SearchChipView extends LinearLayoutCompat {
         View rootView = LayoutInflater.from(context)
                 .inflate(R.layout.chip_search_view, this, true);
         ButterKnife.bind(this);
+
         mViewWrapper = new SearchViewWrapper(context, rootView);
     }
 
@@ -80,6 +82,10 @@ public class SearchChipView extends LinearLayoutCompat {
         }else {
             super.onRestoreInstanceState(state);
         }
+    }
+
+    public void addSearchActionListener(SearchTextAction.SearchTextActionListener listener){
+        mViewWrapper.addSearchActionListener(listener);
     }
 
     public boolean isContentValid(){
@@ -107,6 +113,7 @@ public class SearchChipView extends LinearLayoutCompat {
 
     @OnClick(R.id.search_close_btn)
     public void onCloseClicked(){
+        hideErrorLabel();
         mViewWrapper.setText("");
     }
 
