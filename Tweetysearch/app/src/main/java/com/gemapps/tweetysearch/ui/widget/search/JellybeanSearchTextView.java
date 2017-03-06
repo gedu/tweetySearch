@@ -17,18 +17,21 @@
 package com.gemapps.tweetysearch.ui.widget.search;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.gemapps.tweetysearch.R;
+import com.gemapps.tweetysearch.util.Util;
 import com.hootsuite.nachos.NachoTextView;
 import com.hootsuite.nachos.chip.Chip;
 
+import static android.view.View.GONE;
 import static com.hootsuite.nachos.terminator.ChipTerminatorHandler.BEHAVIOR_CHIPIFY_ALL;
 
 /**
@@ -38,14 +41,36 @@ import static com.hootsuite.nachos.terminator.ChipTerminatorHandler.BEHAVIOR_CHI
 public class JellybeanSearchTextView implements SearchTextAction {
 
     private static final String TAG = "JellybeanSearchTextView";
+    private static final String TUTORIAL_COUNT_PREF = "tweety.TUTORIAL_COUNT_PREF";
+    private static final int TUTORIAL_MAX_COUNT = 3;
     private NachoTextView mSearchText;
+    private View mTutorialSearch;
+    private InputMethodManager mInputManager;
 
     @Override
     public void init(Context context, View rootView) {
+        mInputManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         mSearchText = (NachoTextView) rootView.findViewById(R.id.search_edit_text);
+        mTutorialSearch = rootView.findViewById(R.id.search_tutorial_text);
+        setupSearchText();
+        setupTutorialText(context);
+    }
+
+    private void setupSearchText(){
         mSearchText.addChipTerminator(',', BEHAVIOR_CHIPIFY_ALL);
         mSearchText.setChipTextColorResource(R.color.white);
         mSearchText.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+    }
+
+    private void setupTutorialText(Context context){
+        SharedPreferences sharedPreferences = Util.getPrivatePreferences(context);
+        int count = sharedPreferences.getInt(TUTORIAL_COUNT_PREF, 0);
+        if(count > TUTORIAL_MAX_COUNT){
+            mTutorialSearch.setVisibility(GONE);
+        }else{
+            count++;
+            sharedPreferences.edit().putInt(TUTORIAL_COUNT_PREF, count).apply();
+        }
     }
 
     @Override
@@ -55,6 +80,8 @@ public class JellybeanSearchTextView implements SearchTextAction {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if(actionId == EditorInfo.IME_ACTION_SEARCH){
                     listener.onSearchAction();
+                    mInputManager.hideSoftInputFromWindow(mSearchText.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
                     return true;
                 }
                 return false;
@@ -72,8 +99,7 @@ public class JellybeanSearchTextView implements SearchTextAction {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d(TAG, "onTextChanged: COUNT: "+count);
-                listener.onTextWatched(count);
+                listener.onTextWatched(count+start);
             }
 
             @Override

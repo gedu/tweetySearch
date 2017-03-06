@@ -22,6 +22,7 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -34,10 +35,11 @@ import com.gemapps.tweetysearch.R;
 public class GingerbreadSearchTextView implements SearchTextAction {
 
     private EditText mEditText;
+    private InputMethodManager mInputManager;
 
     @Override
     public void init(Context context, View rootView) {
-
+        mInputManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         mEditText = (EditText) rootView.findViewById(R.id.search_edit_text);
         mEditText.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
     }
@@ -50,6 +52,8 @@ public class GingerbreadSearchTextView implements SearchTextAction {
 
                 if(actionId == EditorInfo.IME_ACTION_SEARCH){
                     listener.onSearchAction();
+                    mInputManager.hideSoftInputFromWindow(mEditText.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
                     return true;
                 }
 
@@ -68,7 +72,7 @@ public class GingerbreadSearchTextView implements SearchTextAction {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                listener.onTextWatched(count);
+                listener.onTextWatched(count+start);
             }
 
             @Override

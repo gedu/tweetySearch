@@ -17,15 +17,24 @@
 package com.gemapps.tweetysearch.ui.mainsearch;
 
 import android.app.ActivityOptions;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.gemapps.tweetysearch.R;
 import com.gemapps.tweetysearch.networking.TwitterSearchManager;
+import com.gemapps.tweetysearch.networking.connectionreceiver.NetworkStateReceiver;
+import com.gemapps.tweetysearch.networking.model.AuthResponseBridge;
 import com.gemapps.tweetysearch.networking.searchquery.RecentlySearchedItem;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 import com.gemapps.tweetysearch.ui.butter.ButterActivity;
@@ -35,6 +44,10 @@ import com.gemapps.tweetysearch.ui.resultsearch.ResultSearchActivity;
 import com.gemapps.tweetysearch.ui.resultsearch.ResultSearchFragment;
 import com.gemapps.tweetysearch.ui.state.ViewStateManager;
 import com.gemapps.tweetysearch.util.Util;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindBool;
 import butterknife.BindView;
@@ -47,6 +60,13 @@ public class MainSearchActivity extends ButterActivity
     private static final String SEARCH_FRAGMENT_TAG = "tweety.SEARCH_FRAGMENT_TAG";
     private static final String RESULT_FRAGMENT_TAG = "tweety.RESULT_FRAGMENT_TAG";
 
+    private static final IntentFilter mNetworkStateFilter =
+            new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+    private static final BroadcastReceiver mNetworkStateReceiver = new NetworkStateReceiver();
+
+    @BindView(R.id.activity_main_search)
+    CoordinatorLayout mCoordinatorLayout;
+
     @Nullable
     @BindView(R.id.result_fragment_container)
     FrameLayout mResultContainer;
@@ -55,6 +75,8 @@ public class MainSearchActivity extends ButterActivity
     boolean isLargeLandScreen;
     @BindBool(R.bool.is_phone)
     boolean mIsPhone;
+
+    private Snackbar mSnackbar;
 
     private ResultSearchFragment mResultFragment;
 
@@ -66,6 +88,18 @@ public class MainSearchActivity extends ButterActivity
         ViewStateManager.getInstance().setDualPanelState(isDualPanel());
         checkViewStateContent();
         addSearchContent(savedInstanceState);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mNetworkStateReceiver, mNetworkStateFilter);
     }
 
     public boolean isDualPanel() {
@@ -128,6 +162,52 @@ public class MainSearchActivity extends ButterActivity
                 .findFragmentByTag(RESULT_FRAGMENT_TAG);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAuthResponseEvent(AuthResponseBridge auth){
+        switch(auth.getType()){
+            case AuthResponseBridge.SUCCESS: dismissAuthSnackbar();
+                break;
+            case AuthResponseBridge.FAILED: showAuthSnackbar(R.string.login_failed_error_msg,
+                    R.string.try_again);
+                break;
+            case AuthResponseBridge.LOGIN_REQUIRED: showAuthSnackbar(R.string.login_required_error_msg,
+                    R.string.login);
+                break;
+            case AuthResponseBridge.LOGIN_IN_PROGRESS: showAuthSnackbar(R.string.authentication_in_progress,
+                    null);
+        }
+    }
+
+    private void dismissAuthSnackbar(){
+        if(mSnackbar != null) mSnackbar.dismiss();
+    }
+
+    private void showAuthSnackbar(@StringRes int msg, @Nullable @StringRes Integer actionLabel) {
+        dismissAuthSnackbar();
+        mSnackbar = Snackbar.make(mCoordinatorLayout, msg, BaseTransientBottomBar.LENGTH_INDEFINITE);
+        if(actionLabel != null) {
+            mSnackbar.setAction(actionLabel, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TwitterSearchManager.getInstance().authenticate();
+                }
+            });
+        }
+        mSnackbar.show();
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(mNetworkStateReceiver);
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
     @Override
     public void onSearchedItemClicked(RecentlySearchedItem searchedItem) {
         startResultActivity();
@@ -141,6 +221,8 @@ public class MainSearchActivity extends ButterActivity
     }
 
     private void startResultActivity() {
+        if(!TwitterSearchManager.getInstance().isAuthenticated())return;
+
         if (!isDualPanel()) {
             if (Util.isLollipop()) {
                 startActivity(new Intent(this, ResultSearchActivity.class),

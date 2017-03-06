@@ -16,6 +16,8 @@
 
 package com.gemapps.tweetysearch.util;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 
 import com.gemapps.tweetysearch.networking.TwitterSearchManager;
@@ -49,6 +51,12 @@ public class Util {
 
     public static boolean isLollipop(){
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
+    public static SharedPreferences getPrivatePreferences(Context context){
+        if(context == null)return null;
+
+        return context.getSharedPreferences("tweetySearch.SharedPreferences", Context.MODE_PRIVATE);
     }
 
     public static class SortDescTweets implements Comparator<TweetItem> {

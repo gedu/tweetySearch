@@ -27,4 +27,9 @@
     <string name="empty_image_desc">Empty bird cage</string>
     <string name="tweet_pic_trans_name">tweetPicture</string>
     <string name="searched_text_trans_name">searchedText</string>
+    <string name="login_failed_error_msg">Login failed</string>
+    <string name="login_required_error_msg">You must to be logged in for searching</string>
+    <string name="login">Login</string>
+    <string name="authentication_in_progress">Authentication in progress, please wait</string>
+    <string name="search_input_tutorial">Separated comma words</string>
 </resources>

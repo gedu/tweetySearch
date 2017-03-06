@@ -20,11 +20,14 @@ import android.util.Log;
 
 import com.gemapps.tweetysearch.BuildConfig;
 import com.gemapps.tweetysearch.networking.TwitterSearchManager;
+import com.gemapps.tweetysearch.networking.model.AuthResponseBridge;
 import com.gemapps.tweetysearch.networking.model.Bearer;
 import com.gemapps.tweetysearch.util.GsonUtil;
 import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
+
+import org.greenrobot.eventbus.EventBus;
 
 import io.realm.Realm;
 
@@ -62,6 +65,8 @@ public class AuthenticationHttpClient extends BaseHttpClient {
             public void execute(Realm realm) {
                 Bearer bearer = GsonUtil.BEARER_GSON.fromJson(body, Bearer.class);
                 realm.insertOrUpdate(bearer);
+
+                EventBus.getDefault().post(new AuthResponseBridge(AuthResponseBridge.SUCCESS));
             }
         });
     }
@@ -69,5 +74,6 @@ public class AuthenticationHttpClient extends BaseHttpClient {
     @Override
     protected void onFail() {
         Log.d(TAG, "onFailure() called");
+        EventBus.getDefault().post(new AuthResponseBridge(AuthResponseBridge.FAILED));
     }
 }

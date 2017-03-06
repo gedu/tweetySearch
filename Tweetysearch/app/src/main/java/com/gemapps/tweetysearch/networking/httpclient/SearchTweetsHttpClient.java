@@ -16,10 +16,14 @@
 
 package com.gemapps.tweetysearch.networking.httpclient;
 
+import com.gemapps.tweetysearch.networking.TwitterSearchManager;
+import com.gemapps.tweetysearch.networking.model.AuthResponseBridge;
 import com.gemapps.tweetysearch.networking.model.NetworkResponseBridge;
 import com.gemapps.tweetysearch.ui.model.TweetCollection;
 import com.gemapps.tweetysearch.util.EventUtil;
 import com.gemapps.tweetysearch.util.GsonUtil;
+
+import org.greenrobot.eventbus.EventBus;
 
 import static com.gemapps.tweetysearch.networking.model.NetworkResponseBridge.TWEETS_EMPTY_SEARCH;
 
@@ -34,15 +38,24 @@ public class SearchTweetsHttpClient extends BaseHttpClient {
     private static final String SINCE_ID_PARAM = "&since_id=%s";
 
     public void getTweets(String url){
-        doGet(url, NetworkResponseBridge.TWEETS_SEARCH);
+        doGetRequest(url, NetworkResponseBridge.TWEETS_SEARCH);
     }
 
     public void getTweetsWithMaxId(String url, long maxId) {
-        doGet(url+String.format(MAX_ID_PARAM, maxId), NetworkResponseBridge.TWEETS_LOAD_MORE);
+        doGetRequest(url+String.format(MAX_ID_PARAM, maxId), NetworkResponseBridge.TWEETS_LOAD_MORE);
     }
 
     public void getTweetsWithSinceId(String url, long tweetSinceId) {
-        doGet(url+String.format(SINCE_ID_PARAM, tweetSinceId), NetworkResponseBridge.TWEETS_LOAD_NEW);
+        doGetRequest(url+String.format(SINCE_ID_PARAM, tweetSinceId), NetworkResponseBridge.TWEETS_LOAD_NEW);
+    }
+
+    private void doGetRequest(String fullUrl, int tag){
+        if(TwitterSearchManager.getInstance().isAuthenticated()) doGet(fullUrl, tag);
+        else sendLoginRequiredEvent();
+    }
+
+    private void sendLoginRequiredEvent(){
+        EventBus.getDefault().post(new AuthResponseBridge(AuthResponseBridge.LOGIN_REQUIRED));
     }
 
     @Override

@@ -64,7 +64,7 @@ public class TwitterSearchManager {
     }
 
     public void authenticate(){
-        if(!bearerExist()) {
+        if(!isAuthenticated()) {
             mBearer = mRealm.where(Bearer.class).findFirstAsync();
             new AuthenticationHttpClient().authenticate(TWITTER_OAUTH_URL);
         }
@@ -72,6 +72,10 @@ public class TwitterSearchManager {
 
     private boolean bearerExist(){
         return mBearer != null;
+    }
+
+    public boolean isAuthenticated(){
+        return mBearer != null && mBearer.isLoaded() && mBearer.isValid();
     }
 
     public void reTryLastSearch(){

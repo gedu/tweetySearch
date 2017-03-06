@@ -59,6 +59,7 @@ public class SearchChipView extends LinearLayoutCompat
     private boolean mIsShowingError;
     private boolean mIsShowingGlass;
 
+    //TODO: has to handle the comma separation
     public SearchChipView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
