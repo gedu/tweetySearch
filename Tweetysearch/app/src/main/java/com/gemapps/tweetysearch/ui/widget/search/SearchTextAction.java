@@ -32,6 +32,10 @@ public interface SearchTextAction {
         void onSearchAction();
     }
 
+    interface SearchTextWatchListener {
+        void onTextWatched(int count);
+    }
+
     static final int MAX_AMOUNT_OF_WORDS = 10;
     static final int MIN_AMOUNT_OF_WORDS = 0;
     static final int EMPTY_ERROR_TEXT = R.string.search_text_empty_error;
@@ -40,6 +44,7 @@ public interface SearchTextAction {
 
     void init(Context context, View rootView);
     void addSearchActionListener(SearchTextActionListener listener);
+    void addSearchWatcherListener(SearchTextWatchListener listener);
     String getText();
     boolean isContentValid();
     void setText(String text);

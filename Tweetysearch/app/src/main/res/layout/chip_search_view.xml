@@ -27,6 +27,7 @@
     android:padding="2dp">
 
     <ImageView
+        android:id="@+id/search_icon_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -35,7 +36,7 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingStart="8dp"
-        app:srcCompat="@drawable/ic_search_black_24px"/>
+        app:srcCompat="@drawable/vc_search"/>
 
     <LinearLayout
         android:layout_width="0dp"

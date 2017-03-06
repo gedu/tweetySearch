@@ -17,6 +17,8 @@
 package com.gemapps.tweetysearch.ui.widget.search;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -52,6 +54,26 @@ public class GingerbreadSearchTextView implements SearchTextAction {
                 }
 
                 return false;
+            }
+        });
+    }
+
+    @Override
+    public void addSearchWatcherListener(final SearchTextWatchListener listener) {
+        mEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                listener.onTextWatched(count);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
     }

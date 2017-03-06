@@ -17,6 +17,8 @@
 package com.gemapps.tweetysearch.ui.widget.search;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -56,6 +58,27 @@ public class JellybeanSearchTextView implements SearchTextAction {
                     return true;
                 }
                 return false;
+            }
+        });
+    }
+
+    @Override
+    public void addSearchWatcherListener(final SearchTextWatchListener listener) {
+        mSearchText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d(TAG, "onTextChanged: COUNT: "+count);
+                listener.onTextWatched(count);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
     }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~    Copyright 2017 Edu Graciano
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  -->
+
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="24dp"
+    android:viewportWidth="48"
+    android:viewportHeight="24"
+    android:alpha="1">
+    <group
+        android:name="menu_search"
+        android:pivotX="12"
+        android:pivotY="12">
+        <path
+            android:name="circle"
+            android:pathData="M25.39,13.39 C24.0002369,14.7797632 21.9746129,15.3225275 20.0761611,14.8138389 C18.1777093,14.3051503 16.6948497,12.8222907 16.1861611,10.9238389 C15.6774725,9.02538707 16.2202368,6.99976313 17.61,5.61 C19.7583877,3.46161232 23.2416123,3.46161232 25.39,5.61 C27.5383877,7.75838768 27.5383877,11.2416123 25.39,13.39"
+            android:strokeColor="#000"
+            android:trimPathEnd="0"
+            android:strokeWidth="2"/>
+        <path
+            android:name="stem"
+            android:pathData="M16,4 L32, 20"
+            android:strokeColor="#000"
+            android:strokeWidth="2"/>
+        <path
+            android:name="top_arrowhead"
+            android:pathData="M16,20 L32,4"
+            android:strokeColor="#000"
+            android:strokeWidth="2"/>
+    </group>
+</vector>

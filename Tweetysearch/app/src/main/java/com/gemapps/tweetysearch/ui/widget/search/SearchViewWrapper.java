@@ -43,6 +43,10 @@ public class SearchViewWrapper {
         mSearchTextView.addSearchActionListener(listener);
     }
 
+    public void addSearchWatcherListener(SearchChipView searchChipView){
+        mSearchTextView.addSearchWatcherListener(searchChipView);
+    }
+
     public String getText(){
         return mSearchTextView.getText();
     }
