@@ -157,6 +157,14 @@ public class ResultSearchFragment extends ButterFragment
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        if(mAdapter != null && mAdapter.getItemCount() > 0)
+            mViewHelper.hideProgressBar();
+    }
+
+    @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
         mViewHelper.setResultListener(null);

@@ -117,6 +117,10 @@ public class ResultViewHelper {
         mIsLoadingMore = false;
     }
 
+    public void hideProgressBar(){
+        mLoadingBar.setVisibility(INVISIBLE);
+    }
+
     public void showProgressBar(){
         mDualPanelHint.setVisibility(GONE);
         mLoadingBar.setVisibility(VISIBLE);
