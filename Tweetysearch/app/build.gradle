@@ -12,7 +12,7 @@ android {
         buildConfigField "String", 'TWITTER_APP_KEY', TWITTER_APP_KEY
         vectorDrawables.useSupportLibrary = true
         versionCode 1
-        versionName "1.7.2"
+        versionName "1.7.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -69,5 +69,6 @@ dependencies {
     compile 'com.android.support:customtabs:25.1.0'
     compile 'com.hootsuite.android:nachos:1.0.0'
     testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.+'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
 }
