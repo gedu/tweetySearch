@@ -69,5 +69,6 @@ dependencies {
     compile 'com.android.support:customtabs:25.1.0'
     compile 'com.hootsuite.android:nachos:1.0.0'
     testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.+'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
 }
