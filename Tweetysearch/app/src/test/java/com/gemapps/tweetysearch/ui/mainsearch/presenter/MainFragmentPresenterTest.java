@@ -1,0 +1,57 @@
+/*
+ *    Copyright 2017 Edu Graciano
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+package com.gemapps.tweetysearch.ui.mainsearch.presenter;
+
+import com.gemapps.tweetysearch.ui.mainsearch.RecentlySearchedAdapter;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
+/**
+ * Created by edu on 3/11/17.
+ */
+
+@RunWith(MockitoJUnitRunner.class)
+public class MainFragmentPresenterTest {
+
+    private MainFragmentContract.OnInteractionListener mPresenter;
+
+    @Mock
+    private MainFragmentContract.View mView;
+    @Mock
+    private MainFragmentContract.OnSearchListener mListener;
+
+    @Before
+    public void setup(){
+        mPresenter = new MainFragmentPresenter(mView, mListener);
+    }
+
+    @Test
+    public void emptySearch_showEmptyView(){
+        RecentlySearchedAdapter mockAdapter = mock(RecentlySearchedAdapter.class);
+        mPresenter.addAdapter(mockAdapter);
+        mPresenter.updateViewFromSearch();
+
+        verify(mView).showEmptyView();
+    }
+}

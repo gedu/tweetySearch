@@ -18,7 +18,9 @@ package com.gemapps.tweetysearch.ui.mainsearch;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,8 @@ import com.gemapps.tweetysearch.networking.searchquery.RecentlySearchedItem;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 import com.gemapps.tweetysearch.networking.searchquery.paramquery.Query;
 import com.gemapps.tweetysearch.ui.butter.ButterFragment;
+import com.gemapps.tweetysearch.ui.mainsearch.presenter.MainFragmentContract;
+import com.gemapps.tweetysearch.ui.mainsearch.presenter.MainFragmentPresenter;
 import com.gemapps.tweetysearch.ui.widget.search.SearchTextAction;
 import com.gemapps.tweetysearch.util.RealmUtil;
 
@@ -45,7 +49,8 @@ import io.realm.RealmResults;
  */
 public class MainSearchFragment extends ButterFragment
         implements RecentlySearchedAdapter.RecentlySearchedListener,
-        SearchTextAction.SearchTextActionListener {
+        SearchTextAction.SearchTextActionListener,
+        MainFragmentContract.View {
 
     private static final String TAG = "MainSearchFragment";
 
@@ -53,6 +58,8 @@ public class MainSearchFragment extends ButterFragment
         void onSearchedItemClicked(RecentlySearchedItem searchedItem);
         void onSearch(UrlParameter urlParameter);
     }
+
+    private MainFragmentContract.OnInteractionListener mInteractionListener;
 
     private OnSearchListener mListener;
     private MainSearchViewHelper mViewHelper;
@@ -71,7 +78,21 @@ public class MainSearchFragment extends ButterFragment
     }
 
     @Override
+    public void onAttach(Context context) {
+        Log.d(TAG, "onAttach: ");
+        super.onAttach(context);
+        if (context instanceof MainFragmentContract.OnSearchListener) {
+            mInteractionListener = new MainFragmentPresenter(this,
+                    (MainFragmentContract.OnSearchListener) context);
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement MainFragmentContract.OnSearchListener");
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         setupQueryBuilder();
         setupAdapterForSearched();
@@ -97,30 +118,31 @@ public class MainSearchFragment extends ButterFragment
         }
     }
 
+    @Override
+    public void showEmptyView(){
+        mViewHelper.showEmptyView();
+    }
+
     private void setupQueryBuilder(){
         mQuery = new Query("");
         mParameterBuilder = new UrlParameter.Builder(mQuery);
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnSearchListener) {
-            mListener = (OnSearchListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView: ");
         View rootView = createView(inflater, container, R.layout.fragment_main_search);
         mViewHelper = new MainSearchViewHelper(rootView);
         setupViewHelper();
         showEmptySearchedView();
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onViewCreated: ");
+        super.onViewCreated(view, savedInstanceState);
     }
 
     private void setupViewHelper(){
