@@ -29,7 +29,15 @@ public interface MainFragmentContract {
     interface View {
         void showEmptyView();
         void hideEmptyView();
+
+        boolean isTextToSearchValid();
+
+        void showSearchErrorLabel();
+        void hideSearchErrorLabel();
+
+        UrlParameter getSearchifiedText();
     }
+
 
     interface OnSearchListener {
         void onSearchedItemClicked(RecentlySearchedItem searchedItem);
@@ -39,5 +47,6 @@ public interface MainFragmentContract {
     interface OnInteractionListener {
         void updateViewFromSearch();
         void addAdapter(RecentlySearchedAdapter adapter);
+        void onPerformActionSearch();
     }
 }

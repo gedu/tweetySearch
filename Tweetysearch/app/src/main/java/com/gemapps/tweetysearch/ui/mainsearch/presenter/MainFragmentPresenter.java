@@ -23,7 +23,7 @@ import com.gemapps.tweetysearch.ui.mainsearch.RecentlySearchedAdapter;
  */
 
 public class MainFragmentPresenter implements MainFragmentContract.OnInteractionListener {
-
+    private static final String TAG = "MainFragmentPresenter";
     private MainFragmentContract.OnSearchListener mListener;
     private MainFragmentContract.View mMainView;
     private RecentlySearchedAdapter mSearchedAdapter;
@@ -42,6 +42,17 @@ public class MainFragmentPresenter implements MainFragmentContract.OnInteraction
 
     public void addAdapter(RecentlySearchedAdapter adapter){
         mSearchedAdapter = adapter;
+    }
+
+    @Override
+    public void onPerformActionSearch() {
+        if(mMainView.isTextToSearchValid()) doSearch();
+        else mMainView.showSearchErrorLabel();
+    }
+
+    private void doSearch(){
+        mMainView.hideSearchErrorLabel();
+        mListener.onSearch(mMainView.getSearchifiedText());
     }
 
 

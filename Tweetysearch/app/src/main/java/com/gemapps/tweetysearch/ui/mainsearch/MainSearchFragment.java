@@ -151,16 +151,28 @@ public class MainSearchFragment extends ButterFragment
 
     @Override
     public void onSearchAction() {
-        if(mViewHelper.isSearchTextValid()) onSearchPressed();
-        else mViewHelper.showErrorSearchLabel();
+        mInteractionListener.onPerformActionSearch();
     }
 
-    public void onSearchPressed() {
-        if (mListener != null) {
-            mViewHelper.hideErrorSearchLabel();
-            mQuery.setParameter(mViewHelper.getTextToSearch());
-            mListener.onSearch(mParameterBuilder.build());
-        }
+    @Override
+    public boolean isTextToSearchValid() {
+        return mViewHelper.isSearchTextValid();
+    }
+
+    @Override
+    public void showSearchErrorLabel() {
+        mViewHelper.showErrorSearchLabel();
+    }
+
+    @Override
+    public void hideSearchErrorLabel() {
+        mViewHelper.hideErrorSearchLabel();
+    }
+
+    @Override
+    public UrlParameter getSearchifiedText(){
+        mQuery.setParameter(mViewHelper.getTextToSearch());
+        return mParameterBuilder.build();
     }
 
     @Override

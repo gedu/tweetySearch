@@ -50,6 +50,7 @@ public class MainFragmentPresenterTest {
     @Test
     public void emptySearch_showEmptyView(){
         RecentlySearchedAdapter mockAdapter = getMockAdapter();
+
         mPresenter.addAdapter(mockAdapter);
         mPresenter.updateViewFromSearch();
 
@@ -60,10 +61,29 @@ public class MainFragmentPresenterTest {
     public void succeedSearch_hideEmptyView(){
         RecentlySearchedAdapter mockAdapter = getMockAdapter();
         when(mockAdapter.getItemCount()).thenReturn(1);
+
         mPresenter.addAdapter(mockAdapter);
         mPresenter.updateViewFromSearch();
 
         verify(mView).hideEmptyView();
+    }
+
+    @Test
+    public void onSearchButtonClicked_showErrorLabel(){
+        mPresenter.onPerformActionSearch();
+        verify(mView).isTextToSearchValid();
+        verify(mView).showSearchErrorLabel();
+    }
+
+    @Test
+    public void onSearchButtonClicked_doSearch(){
+        when(mView.isTextToSearchValid()).thenReturn(true);
+
+        mPresenter.onPerformActionSearch();
+
+        verify(mView).isTextToSearchValid();
+        verify(mView).hideSearchErrorLabel();
+        verify(mView).getSearchifiedText();
     }
 
     private RecentlySearchedAdapter getMockAdapter(){
