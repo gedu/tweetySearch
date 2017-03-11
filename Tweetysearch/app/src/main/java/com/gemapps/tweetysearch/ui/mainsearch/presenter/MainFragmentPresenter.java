@@ -37,6 +37,7 @@ public class MainFragmentPresenter implements MainFragmentContract.OnInteraction
     @Override
     public void updateViewFromSearch() {
         if(mSearchedAdapter.getItemCount() == 0) mMainView.showEmptyView();
+        else mMainView.hideEmptyView();
     }
 
     public void addAdapter(RecentlySearchedAdapter adapter){

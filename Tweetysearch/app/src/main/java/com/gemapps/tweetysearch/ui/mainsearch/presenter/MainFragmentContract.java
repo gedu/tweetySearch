@@ -28,6 +28,7 @@ public interface MainFragmentContract {
 
     interface View {
         void showEmptyView();
+        void hideEmptyView();
     }
 
     interface OnSearchListener {

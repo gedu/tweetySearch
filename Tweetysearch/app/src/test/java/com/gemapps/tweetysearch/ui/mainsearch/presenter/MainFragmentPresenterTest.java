@@ -26,6 +26,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by edu on 3/11/17.
@@ -48,10 +49,24 @@ public class MainFragmentPresenterTest {
 
     @Test
     public void emptySearch_showEmptyView(){
-        RecentlySearchedAdapter mockAdapter = mock(RecentlySearchedAdapter.class);
+        RecentlySearchedAdapter mockAdapter = getMockAdapter();
         mPresenter.addAdapter(mockAdapter);
         mPresenter.updateViewFromSearch();
 
         verify(mView).showEmptyView();
+    }
+
+    @Test
+    public void succeedSearch_hideEmptyView(){
+        RecentlySearchedAdapter mockAdapter = getMockAdapter();
+        when(mockAdapter.getItemCount()).thenReturn(1);
+        mPresenter.addAdapter(mockAdapter);
+        mPresenter.updateViewFromSearch();
+
+        verify(mView).hideEmptyView();
+    }
+
+    private RecentlySearchedAdapter getMockAdapter(){
+        return mock(RecentlySearchedAdapter.class);
     }
 }

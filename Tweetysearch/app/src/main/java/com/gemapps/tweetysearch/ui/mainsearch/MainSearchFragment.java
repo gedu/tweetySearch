@@ -102,25 +102,23 @@ public class MainSearchFragment extends ButterFragment
         mRealm = Realm.getDefaultInstance();
         mSearchedItems = RealmUtil.findRecentlySearchedAsync();
         mSearchedAdapter = new RecentlySearchedAdapter(getContext(), mSearchedItems, this);
+        mInteractionListener.addAdapter(mSearchedAdapter);
         mSearchedItems.addChangeListener(new RealmChangeListener<RealmResults<RecentlySearchedItem>>() {
             @Override
             public void onChange(RealmResults<RecentlySearchedItem> element) {
-                showEmptySearchedView();
+                mInteractionListener.updateViewFromSearch();
             }
         });
-    }
-
-    private void showEmptySearchedView(){
-        if(mSearchedAdapter.getItemCount() == 0){
-            mViewHelper.showEmptyView();
-        }else{
-            mViewHelper.hideEmptyView();
-        }
     }
 
     @Override
     public void showEmptyView(){
         mViewHelper.showEmptyView();
+    }
+
+    @Override
+    public void hideEmptyView(){
+        mViewHelper.hideEmptyView();
     }
 
     private void setupQueryBuilder(){
@@ -135,7 +133,7 @@ public class MainSearchFragment extends ButterFragment
         View rootView = createView(inflater, container, R.layout.fragment_main_search);
         mViewHelper = new MainSearchViewHelper(rootView);
         setupViewHelper();
-        showEmptySearchedView();
+        mInteractionListener.updateViewFromSearch();
         return rootView;
     }
 
