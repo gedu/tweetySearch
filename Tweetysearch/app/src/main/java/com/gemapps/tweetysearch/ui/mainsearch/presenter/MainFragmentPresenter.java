@@ -16,7 +16,13 @@
 
 package com.gemapps.tweetysearch.ui.mainsearch.presenter;
 
+import com.gemapps.tweetysearch.networking.searchquery.RecentlySearchedItem;
 import com.gemapps.tweetysearch.ui.mainsearch.RecentlySearchedAdapter;
+import com.gemapps.tweetysearch.util.RealmUtil;
+
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 
 /**
  * Created by edu on 3/11/17.
@@ -24,14 +30,26 @@ import com.gemapps.tweetysearch.ui.mainsearch.RecentlySearchedAdapter;
 
 public class MainFragmentPresenter implements MainFragmentContract.OnInteractionListener {
     private static final String TAG = "MainFragmentPresenter";
+    private final Realm mRealm;
     private MainFragmentContract.OnSearchListener mListener;
     private MainFragmentContract.View mMainView;
     private RecentlySearchedAdapter mSearchedAdapter;
+    private RealmResults<RecentlySearchedItem> mSearchedItems;
 
     public MainFragmentPresenter(MainFragmentContract.View view ,
+                                 RecentlySearchable searchableInjection,
+                                 Realm realm,
                                  MainFragmentContract.OnSearchListener listener) {
         mMainView = view;
+        mRealm = realm;
         mListener = listener;
+        mSearchedItems = searchableInjection.getRecentlySearchedItems();
+        mSearchedItems.addChangeListener(new RealmChangeListener<RealmResults<RecentlySearchedItem>>() {
+            @Override
+            public void onChange(RealmResults<RecentlySearchedItem> element) {
+                updateViewFromSearch();
+            }
+        });
     }
 
     @Override
@@ -50,9 +68,31 @@ public class MainFragmentPresenter implements MainFragmentContract.OnInteraction
         else mMainView.showSearchErrorLabel();
     }
 
+    @Override
+    public RealmResults<RecentlySearchedItem> getSearchedItems() {
+        return mSearchedItems;
+    }
+
+    @Override
+    public void onSearchedItemClick(int position) {
+        mListener.onSearchedItemClicked(mSearchedItems.get(position));
+    }
+
+    @Override
+    public void onDeleteSearchedItem(int position) {
+        RealmUtil.deleteSearch(mRealm, mSearchedItems.get(position));
+    }
+
     private void doSearch(){
         mMainView.hideSearchErrorLabel();
         mListener.onSearch(mMainView.getSearchifiedText());
+    }
+
+    @Override
+    public void wipeListeners() {
+        mListener = null;
+        mSearchedItems.removeChangeListeners();
+        mRealm.close();
     }
 
 

@@ -20,6 +20,8 @@ import com.gemapps.tweetysearch.networking.searchquery.RecentlySearchedItem;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 import com.gemapps.tweetysearch.ui.mainsearch.RecentlySearchedAdapter;
 
+import io.realm.RealmResults;
+
 /**
  * Created by edu on 3/11/17.
  * Contract between the view and the presenter
@@ -48,5 +50,12 @@ public interface MainFragmentContract {
         void updateViewFromSearch();
         void addAdapter(RecentlySearchedAdapter adapter);
         void onPerformActionSearch();
+
+        RealmResults<RecentlySearchedItem> getSearchedItems();
+
+        void onSearchedItemClick(int position);
+        void onDeleteSearchedItem(int position);
+
+        void wipeListeners();
     }
 }

@@ -44,7 +44,9 @@ public class MainFragmentPresenterTest {
 
     @Before
     public void setup(){
-        mPresenter = new MainFragmentPresenter(mView, mListener);
+        mPresenter = new MainFragmentPresenter(mView,
+                SearchedItemInjector.provideRecentlyItems(),
+                mListener);
     }
 
     @Test
