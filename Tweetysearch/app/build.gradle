@@ -37,6 +37,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    // Remove devRelease as it's not needed.
+    android.variantFilter { variant ->
+        if(variant.buildType.name.equals('release')
+                && variant.getFlavors().get(0).name.equals('dev')) {
+            variant.setIgnore(true);
+        }
+    }
 }
 
 buildscript {
@@ -70,5 +78,6 @@ dependencies {
     compile 'com.hootsuite.android:nachos:1.0.0'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.+'
+    testCompile "org.powermock:powermock-api-mockito:1.6.4"
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
 }

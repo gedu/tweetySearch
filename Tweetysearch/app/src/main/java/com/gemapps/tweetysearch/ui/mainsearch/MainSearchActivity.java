@@ -39,6 +39,7 @@ import com.gemapps.tweetysearch.networking.searchquery.RecentlySearchedItem;
 import com.gemapps.tweetysearch.networking.searchquery.UrlParameter;
 import com.gemapps.tweetysearch.ui.butter.ButterActivity;
 import com.gemapps.tweetysearch.ui.detailsearch.DetailSearchActivity;
+import com.gemapps.tweetysearch.ui.mainsearch.presenter.MainFragmentContract;
 import com.gemapps.tweetysearch.ui.model.TweetItem;
 import com.gemapps.tweetysearch.ui.resultsearch.ResultSearchActivity;
 import com.gemapps.tweetysearch.ui.resultsearch.ResultSearchFragment;
@@ -53,7 +54,7 @@ import butterknife.BindBool;
 import butterknife.BindView;
 
 public class MainSearchActivity extends ButterActivity
-        implements MainSearchFragment.OnSearchListener,
+        implements MainFragmentContract.OnSearchListener,
         ResultSearchFragment.ResultSearchListener {
 
     private static final String TAG = "MainSearchActivity";
